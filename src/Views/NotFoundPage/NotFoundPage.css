@@ -1,0 +1,13 @@
+.notFoundImage {
+  width: 25rem;
+  margin-top: 5rem;
+}
+
+.notFoundBanner h1 {
+  line-height: 4rem;
+}
+
+.notFoundImageContainer {
+  text-align: center;
+  width: 100%;
+}

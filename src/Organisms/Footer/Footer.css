@@ -1,0 +1,38 @@
+.footer {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  height: auto;
+  position: absolute;
+  bottom: 0;
+  z-index: 3;
+  background: #6d5b5b;
+  border-top: 4mm ridge rgb(207, 115, 45);
+}
+
+.socialImage {
+  width: 4.5rem;
+}
+
+.socialContainer {
+  display: flex;
+  justify-content: space-evenly;
+  padding-top: 2rem;
+  max-width: 100rem;
+  margin: 0 auto;
+}
+
+.footerWave {
+  height: 2rem;
+  object-position: -20rem;
+}
+
+.copyright {
+  margin-top: 1em;
+  padding-bottom: 1em;
+  font-size: .8rem;
+}
+
+.portLink {
+  color: black;
+}

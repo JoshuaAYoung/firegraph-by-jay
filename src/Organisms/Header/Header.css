@@ -1,0 +1,42 @@
+.navBarContainer {
+  display: flex;
+  justify-content: flex-start;
+  padding: 20px 0;
+  background: #6d5b5b;
+  border-bottom: 4mm ridge rgb(207, 115, 45);
+}
+
+.logoLink {
+  height: 100%;
+  display: inline-block;
+}
+
+.mainLogo {
+  width: 2rem;
+  display: inline-block;
+  margin-left: 1rem;
+  vertical-align: -0.8rem;
+}
+
+.navName {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  display: inline-block;
+  letter-spacing: -0.1rem;
+  font-style: none;
+  color: rgb(255, 170, 0);
+  padding-right: 1rem;
+  margin: 0 0 0 .4rem;
+}
+
+.navNameSmall {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: .9rem;
+  color: white;
+  font-style: none;
+  margin-left: .1rem;
+  letter-spacing: 0;
+}
