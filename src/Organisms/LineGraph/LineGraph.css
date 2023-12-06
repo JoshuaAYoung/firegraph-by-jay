@@ -1,0 +1,11 @@
+.verticalSegmentLabel {
+  writing-mode: tb-rl;
+  z-index: 1;
+  font-weight: 600;
+  fill: gray;
+}
+
+.recharts-label {
+  font-weight: 500;
+  fill: black;
+}

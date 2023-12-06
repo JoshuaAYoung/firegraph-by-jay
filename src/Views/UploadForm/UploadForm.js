@@ -5,6 +5,11 @@
 // mail instead of github for footer - thicker logos, yellow/orange
 // expander thing to view the whole CSV?
 // how to get a skip step in there, since it can happen in the middle of a ramp?
+// Note about how hold data sometimes isn't in there (like at the end of my first glaze fire csv)
+// deviation from target ramp in last 200 degrees!!!
+// icon button with tooltips all over the place (table headers, and other values that aren't self explanatory)
+// HOST
+// google analytics with javascript error logger: https://www.analyticsmania.com/post/tracking-errors-with-google-tag-manager/#:~:text=Go%20to%20Triggers%20%3E%20New%20%3E%20Trigger,Error%20URL%2C%20and%20Error%20Line.
 import React from 'react';
 import { Button, styled, SvgIcon } from '@mui/joy';
 import './UploadForm.css';
@@ -44,7 +49,7 @@ const UploadForm = () => {
           navigate('/results');
         },
         error(error) {
-          console.log("Handle the error here", error)
+          console.log('Handle the error here', error);
         },
       });
     }

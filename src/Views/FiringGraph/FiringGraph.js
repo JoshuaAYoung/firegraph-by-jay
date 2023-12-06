@@ -1,41 +1,49 @@
-import React, { useEffect, useState } from 'react';
-import { Button, CircularProgress } from '@mui/joy';
+import React, { useEffect } from 'react';
+import { CircularProgress } from '@mui/joy';
 import { useFGContext } from '../../context/FGContext';
-import analyzeCsv, {calculateActualRamp} from '../../Utils/csvUtils/csvUtils';
+import analyzeCsv, { calculateActualRamp } from '../../Utils/csvUtils/csvUtils';
+import LineGraph from '../../Organisms/LineGraph/LineGraph';
+import './FiringGraph.css';
 
 const FiringGraph = () => {
-  const { csvArray, analysisData, setAnalysisData} = useFGContext();
+  const { csvArray, analysisData, setAnalysisData } = useFGContext();
 
   useEffect(() => {
-    console.log("useEffect", analysisData)
     if (csvArray && !analysisData) {
-      console.log("running analysis");
       const analyzedData = analyzeCsv(csvArray);
       setAnalysisData(analyzedData);
     }
   }, []);
 
   useEffect(() => {
-    console.log("analdata", analysisData)
+    console.log('analdata', analysisData);
     if (analysisData && analysisData.segments) {
       const segmentRampActual = [];
       analysisData.segments.forEach((segment) => {
-        segmentRampActual.push(calculateActualRamp(segment.actualHalfMinutes, segment.startActualTemp, segment.endActualTemp, segment.number));
-      })
-      console.log("actualramp", segmentRampActual)
+        segmentRampActual.push(
+          calculateActualRamp(
+            segment.actualHalfMinutes,
+            segment.startActualTemp,
+            segment.endActualTemp,
+            segment.number
+          )
+        );
+        segmentRampActual.push({
+          [`target${segment.number}`]: segment.targetRamp,
+        });
+      });
+      console.log('actualramp', segmentRampActual);
     }
   }, [analysisData]);
 
-  // if (!analysisData) {
-  //   return <CircularProgress />;
-  // }
+  if (!analysisData) {
+    return <CircularProgress />;
+  }
 
   return (
-    <div className="uploadForm">
-      <Button variant="contained" component="label">
-        Upload File
-        <input type="file" hidden />
-      </Button>
+    // Header with name of the program and the date
+    <div className="graphContainer">
+      <LineGraph />
     </div>
   );
 };
