@@ -1,14 +1,23 @@
 // TODO
-// x button here to clear the current file (from state too)
-// obviously the graph on the results page
-// link to my instagram in a footer or something?
-// mail instead of github for footer - thicker logos, yellow/orange
-// expander thing to view the whole CSV?
-// how to get a skip step in there, since it can happen in the middle of a ramp?
-// Note about how hold data sometimes isn't in there (like at the end of my first glaze fire csv)
-// deviation from target ramp in last 200 degrees!!!
+// High Priority
+// General data - look at Grid component
+// Table - Look at collapsible row example from Joi - Striped
+// x button here on the input to clear the current file (from state too)
+// Multi file upload for longer firings (what's the ui for this look like? - maybe a plus button next to the input with a tooltip? Tooltip component)
+// redo the footer link SVGs and add email back
+// Note about how hold data sometimes isn't in there (like at the end of my first glaze fire csv) - info button on last segment hold cell instead of data?
+// deviation from target ramp in last 200 degrees!!! (can we make this work for C and F?)
+// dropdown to align segment! - in the header next to the TC selection?
+// TC selection dropdown - show the average temp for each TC in the dropdown - info button to tell you what this is - Joi Select with multiple prop
+// Print page to pdf button in the upper right? Maybe in the menu bar?
+
+// Low Priority
+// expander thing to view the whole CSV at bottom of FiringGraph page (what lib?)
 // icon button with tooltips all over the place (table headers, and other values that aren't self explanatory)
-// HOST
+// Textarea component for insterting personal notes about the firing
+// Empty state component instead of loading spinner with link to home page
+// how about an alert component that one of their TCs was a certain deviation from the average?
+// Other things to implement? https://community.ceramicartsdaily.org/topic/39241-building-a-genesis-log-file-grapher-website-for-me-and-community-need-feedback/
 // google analytics with javascript error logger: https://www.analyticsmania.com/post/tracking-errors-with-google-tag-manager/#:~:text=Go%20to%20Triggers%20%3E%20New%20%3E%20Trigger,Error%20URL%2C%20and%20Error%20Line.
 import React from 'react';
 import { Button, styled, SvgIcon } from '@mui/joy';

@@ -10,6 +10,7 @@ import {
   ReferenceLine,
   ResponsiveContainer,
 } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 import { useFGContext } from '../../context/FGContext';
 import './LineGraph.css';
 import { composeTargetChartData } from '../../Utils/csvUtils/csvUtils';
@@ -19,6 +20,8 @@ const LineGraph = () => {
   const [actualChartData, setActualChartData] = useState([]);
   const [targetChartData, setTargetChartData] = useState([]);
   const [combinedChartData, setCombinedChartData] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (analysisData) {
@@ -34,6 +37,8 @@ const LineGraph = () => {
 
       setActualChartData(actualData);
 
+      // Combine the two arrays by index, and combine the object at that index
+      // i.e. {[time: 0, temp: 20} ...] + {[time: 0, targetTemp: 25} ...] = {[{time: 0, temp: 20, targetTemp: 25} ...]
       const zip = (a, b) => {
         const largerArray = a.length > b.length ? a : b;
         const smallerArray = a.length < b.length ? a : b;
@@ -49,9 +54,16 @@ const LineGraph = () => {
 
       console.log('actualData', actualData);
       console.log('target', composeTargetChartData(analysisData));
-      console.log('combined', combinedChartData);
+      console.log('combined', combinedData);
     }
   }, [analysisData]);
+
+  // useEffect(() => {
+  //   console.log('analysisData', analysisData);
+  //   if (!analysisData) {
+  //     navigate('/');
+  //   }
+  // }, []);
 
   const renderCustomAxisTick = (props) => {
     return (
