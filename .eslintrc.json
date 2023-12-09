@@ -31,6 +31,6 @@
     "react/jsx-wrap-multilines": "off",
     "import/prefer-default-export": "off",
     "react/no-array-index-key": "off",
-    "react/jsx-indent-props": "12"
+    "react/jsx-indent-props": "off"
   }
 }
