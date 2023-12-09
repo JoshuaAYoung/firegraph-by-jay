@@ -1,33 +1,36 @@
 // TODO
 // High Priority
 // General data - look at Grid component
-// Table - Look at collapsible row example from Joi - Striped
+// Table - Look at collapsible row example from Joi - Striped - TABLE DATA CHANGES WHEN YOU CHANGE DROPDOWN FOR TC
 // x button here on the input to clear the current file (from state too)
 // Multi file upload for longer firings (what's the ui for this look like? - maybe a plus button next to the input with a tooltip? Tooltip component)
-// redo the footer link SVGs and add email back
 // Note about how hold data sometimes isn't in there (like at the end of my first glaze fire csv) - info button on last segment hold cell instead of data?
 // deviation from target ramp in last 200 degrees!!! (can we make this work for C and F?)
-// dropdown to align segment! - in the header next to the TC selection?
-// TC selection dropdown - show the average temp for each TC in the dropdown - info button to tell you what this is - Joi Select with multiple prop
-// Print page to pdf button in the upper right? Maybe in the menu bar?
+// 3 dropdowns above the graph (in some sort of header?)
+// - dropdown to align segment! - in the header next to the TC selection?
+// - TC selection dropdown - show the average temp for each TC in the dropdown - info button to tell you what this is - Joi Select with multiple prop - 3TC max
+//    - Need info explaining that the TC selection also affects the data at the bottom of the page
+//    - have some sort of checkbox with info tooltip so that user can select to average the TC's or show each on the graph
+// - Out# multi selection dropdown - if one selected, turns the graph into biaxial (see example), and shows you a line for each output percentage with the % y axis on the right
 
 // Low Priority
 // expander thing to view the whole CSV at bottom of FiringGraph page (what lib?)
 // icon button with tooltips all over the place (table headers, and other values that aren't self explanatory)
-// Textarea component for insterting personal notes about the firing
+// Textarea component for inserting personal notes about the firing
 // Empty state component instead of loading spinner with link to home page
 // how about an alert component that one of their TCs was a certain deviation from the average?
 // Other things to implement? https://community.ceramicartsdaily.org/topic/39241-building-a-genesis-log-file-grapher-website-for-me-and-community-need-feedback/
 // google analytics with javascript error logger: https://www.analyticsmania.com/post/tracking-errors-with-google-tag-manager/#:~:text=Go%20to%20Triggers%20%3E%20New%20%3E%20Trigger,Error%20URL%2C%20and%20Error%20Line.
-import React from 'react';
-import { Button, styled, SvgIcon } from '@mui/joy';
+import React, { useEffect } from 'react';
+import { Button, styled } from '@mui/joy';
 import './UploadForm.css';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
+import { MdOutlineCloudUpload } from 'react-icons/md';
 import { useFGContext } from '../../context/FGContext';
 
 const UploadForm = () => {
-  const { csvFile, setCsvFile, setCsvArray } = useFGContext();
+  const { csvFile, setCsvFile, setCsvArray, setAnalysisData } = useFGContext();
   const navigate = useNavigate();
 
   const VisuallyHiddenInput = styled('input')`
@@ -64,6 +67,12 @@ const UploadForm = () => {
     }
   };
 
+  useEffect(() => {
+    setCsvFile(null);
+    setCsvArray(null);
+    setAnalysisData(null);
+  }, []);
+
   return (
     <div className="uploadForm">
       <div className="uploadCard">
@@ -86,23 +95,7 @@ const UploadForm = () => {
                 display: 'block',
               },
             }}
-            startDecorator={
-              <SvgIcon>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                  />
-                </svg>
-              </SvgIcon>
-            }
+            startDecorator={<MdOutlineCloudUpload size={18} />}
           >
             {csvFile ? (
               <span className="uploadTitle">{csvFile.name}</span>

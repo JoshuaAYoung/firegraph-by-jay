@@ -1,5 +1,9 @@
 import React from 'react';
 import './Footer.css';
+import { VscGithub } from 'react-icons/vsc';
+import { PiInstagramLogoBold } from 'react-icons/pi';
+import { HiOutlineMail } from 'react-icons/hi';
+import { RiRedditLine } from 'react-icons/ri';
 
 const Footer = () => {
   // generate current year for copyright
@@ -10,55 +14,49 @@ const Footer = () => {
   }
 
   return (
-    <footer className="footer">
+    <div className="footer">
       <div className="socialContainer">
+        <a
+          href="https://www.instagram.com/jay_klay_pots"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram Link"
+          className="socialIcon"
+        >
+          <PiInstagramLogoBold size={32} />
+        </a>
         <a
           href="mailto:joshua@young.net"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Email Link"
+          className="socialIcon"
         >
-          <img
-            src="/assets/instagram-icon.svg"
-            alt="instagram logo"
-            className="socialImage"
-          />
+          <HiOutlineMail size={32} />
         </a>
         <a
           href="https://github.com/JoshuaAYoung"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Github Link"
+          className="socialIcon"
         >
-          <img
-            src="/assets/github-icon.svg"
-            alt="github logo"
-            className="socialImage"
-          />
+          <VscGithub size={28} />
         </a>
         <a
           href="https://www.reddit.com/user/jay_klay_pots"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Reddit Link"
+          className="socialIcon"
         >
-          <img
-            src="/assets/reddit-icon.svg"
-            alt="reddit logo"
-            className="socialImage"
-          />
+          <RiRedditLine size={32} />
         </a>
       </div>
       <p className="copyright">
-        Copyright &copy; {generateCopyright()}
-        <br />
-        <a
-          href="https://joshyoung.net"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="portLink"
-        >
-          Josh Young
-        </a>
+        Copyright &copy; {generateCopyright()} - Josh Young
       </p>
-    </footer>
+    </div>
   );
 };
 

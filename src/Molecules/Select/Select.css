@@ -1,0 +1,11 @@
+.selectContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.labelContainer {
+  display: flex;
+  align-items: flex-end;
+}

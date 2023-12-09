@@ -14,14 +14,18 @@ import { useNavigate } from 'react-router-dom';
 import { useFGContext } from '../../context/FGContext';
 import './LineGraph.css';
 import { composeTargetChartData } from '../../Utils/csvUtils/csvUtils';
+import { minutesToHourString } from '../../Utils/dateUtils/dateUtils';
 
 const LineGraph = () => {
-  const { analysisData } = useFGContext();
-  const [actualChartData, setActualChartData] = useState([]);
-  const [targetChartData, setTargetChartData] = useState([]);
+  const { analysisData, graphOptions } = useFGContext();
   const [combinedChartData, setCombinedChartData] = useState([]);
 
   const navigate = useNavigate();
+
+  const outputOptionsLength = graphOptions && graphOptions.out.length;
+
+  const tcColorArray = ['#003f5c', '#444e86', '#955196'];
+  const outColorArray = ['#dd5182', '#ff6e54', '#ffa600'];
 
   useEffect(() => {
     if (analysisData) {
@@ -33,12 +37,8 @@ const LineGraph = () => {
 
       const targetData = composeTargetChartData(analysisData);
 
-      setTargetChartData(composeTargetChartData(analysisData));
-
-      setActualChartData(actualData);
-
       // Combine the two arrays by index, and combine the object at that index
-      // i.e. {[time: 0, temp: 20} ...] + {[time: 0, targetTemp: 25} ...] = {[{time: 0, temp: 20, targetTemp: 25} ...]
+      // i.e. {[time: 0, temp1: 20} ...] + {[time: 0, targetTemp: 25} ...] = {[{time: 0, temp1: 20, targetTemp: 25} ...]
       const zip = (a, b) => {
         const largerArray = a.length > b.length ? a : b;
         const smallerArray = a.length < b.length ? a : b;
@@ -73,7 +73,7 @@ const LineGraph = () => {
         orientation={props.orientation}
         textAnchor={props.textAnchor}
       >
-        {props.payload.value}
+        {props.payload.value / 60}
       </text>
     );
   };
@@ -93,11 +93,19 @@ const LineGraph = () => {
   };
 
   const tooltipFormatter = (value, name, props) => {
-    if (props && (props.dataKey === 'temp' || props.dataKey === 'targetTemp')) {
+    if (props && props.dataKey === 'targetTemp') {
       return [`${value}°`, `${name} Temp`];
     }
-    return `Time : ${value} min.`;
+    if (props && props.dataKey.includes('temp')) {
+      return [`${value}°`, `${name} Temp${graphOptions.avg ? ' (avg.)' : ''}`];
+    }
+    if (props && props.dataKey.includes('out')) {
+      return [`${value}%`, `${name}`];
+    }
+    return `Time : ${minutesToHourString(value)} hours`;
   };
+
+  console.log('graph', graphOptions, outputOptionsLength);
 
   return (
     <ResponsiveContainer width="100%" height="100%" marginTop={20}>
@@ -121,6 +129,7 @@ const LineGraph = () => {
               stroke="red"
               label={<CustomReferenceLabel value={segment.number} />}
               strokeDasharray="6 3"
+              yAxisId="left"
             />
           );
         })}
@@ -130,7 +139,7 @@ const LineGraph = () => {
           type="number"
           padding={{ left: 40, right: 40 }}
           label={{
-            value: 'Time in Minutes',
+            value: 'Time in Hours',
             position: 'insideBottom',
             offset: 40,
           }}
@@ -139,7 +148,7 @@ const LineGraph = () => {
           interval={59}
         />
         <YAxis
-          dataKey="temp"
+          // dataKey="temp2" // Change to average? Or longest? What does this do exactly?
           type="number"
           padding={{ top: 40 }}
           label={{
@@ -147,31 +156,96 @@ const LineGraph = () => {
             angle: -90,
             offset: 2000,
           }}
+          yAxisId="left"
         />
         <Tooltip
           formatter={tooltipFormatter}
           labelFormatter={tooltipFormatter}
+          
         />
         <Legend />
-        <Line
-          name="Actual"
-          type="linear"
-          dataKey="temp"
-          stroke="#8884d8"
-          activeDot={{ r: 8 }}
-          dot={false}
-          strokeWidth={4}
-        />
         <Line
           name="Target"
           type="linear"
           dataKey="targetTemp"
-          stroke="#82ca9d"
+          stroke="#57B8FF"
+          // stroke="#de663e"
+          // stroke="#deaa30"
+          // stroke="#D47014"
           activeDot={{ r: 4 }}
           dot={false}
-          strokeWidth={4}
+          strokeWidth={3}
           connectNulls
+          yAxisId="left"
+          isAnimationActive={false}
         />
+        {!graphOptions.avg
+          ? graphOptions.tcs.map((tcNumber) => {
+              console.log('tcNumber???', tcNumber);
+              return (
+                <Line
+                  key={`tc${tcNumber}`}
+                  name={`Actual TC${tcNumber}`}
+                  type="linear"
+                  dataKey={`temp${tcNumber}`}
+                  // stroke="#0b84a5"
+                  stroke={tcColorArray[tcNumber - 1]}
+                  activeDot={{ r: 8 }}
+                  dot={false}
+                  strokeWidth={3}
+                  yAxisId="left"
+                  animationDuration={3000}
+                />
+              );
+            })
+          : graphOptions.tcs.length && (
+              <Line
+            name="Actual"
+            type="linear"
+            dataKey="temp2"
+            stroke={tcColorArray[2]}
+            activeDot={{ r: 8 }}
+            dot={false}
+            strokeWidth={3}
+            yAxisId="left"
+            animationDuration={3000}
+              />
+            )}
+        {outputOptionsLength !== 0 && (
+          <>
+            <YAxis
+              // dataKey="out2"
+              type="number"
+              padding={{ top: 40 }}
+              label={{
+                value: 'Output %',
+                angle: -90,
+                offset: 2000,
+              }}
+              yAxisId="right"
+              orientation="right"
+              scale="linear"
+              domain={[0, 100]}
+            />
+            {graphOptions.out.map((outputNumber) => {
+              return (
+                <Line
+                  key={`out${outputNumber}`}
+                  name={`Output ${outputNumber}`}
+                  type="linear"
+                  dataKey={`out${outputNumber}`}
+                  // stroke="#0b84a5"
+                  stroke={outColorArray[outputNumber - 1]}
+                  activeDot={{ r: 8 }}
+                  dot={false}
+                  strokeWidth={3}
+                  yAxisId="right"
+                  animationDuration={3000}
+                />
+              );
+            })}
+          </>
+        )}
       </LineChart>
     </ResponsiveContainer>
   );

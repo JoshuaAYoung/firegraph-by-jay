@@ -1,20 +1,21 @@
 .navBarContainer {
   display: flex;
-  justify-content: flex-start;
-  padding: 20px 0;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
   background: #6d5b5b;
-  border-bottom: 4mm ridge rgb(207, 115, 45);
+  border-bottom: 3mm ridge rgb(207, 115, 45);
 }
 
 .logoLink {
   height: 100%;
-  display: inline-block;
+  display: flex;
+  text-decoration: none;
 }
 
 .mainLogo {
   width: 2rem;
   display: inline-block;
-  margin-left: 1rem;
   vertical-align: -0.8rem;
 }
 
@@ -22,13 +23,13 @@
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
   font-size: 1.5rem;
-  line-height: 2rem;
+  line-height: 1.5rem;
   display: inline-block;
   letter-spacing: -0.1rem;
-  font-style: none;
-  color: rgb(255, 170, 0);
+  color: #ffaa00;
   padding-right: 1rem;
   margin: 0 0 0 .4rem;
+  text-align: start;
 }
 
 .navNameSmall {
@@ -36,7 +37,38 @@
   font-weight: 400;
   font-size: .9rem;
   color: white;
-  font-style: none;
-  margin-left: .1rem;
+  margin: 0 0 0 .4rem;
   letter-spacing: 0;
+  text-align: start;
+}
+
+.navNameContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.titleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.programTitle {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  font-size: 1.4rem;
+  letter-spacing: -1px;
+  display: inline-block;
+  color: white;
+}
+
+.programSubtitle {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: .9rem;
+  color: white;
+  margin: 0 0 0 .4rem;
+  letter-spacing: 0;
+  text-align: start;
 }

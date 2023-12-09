@@ -8,6 +8,7 @@ export const FGContextProvider = ({ children }) => {
   const [csvFile, setCsvFile] = useState(null);
   const [csvArray, setCsvArray] = useState(null);
   const [analysisData, setAnalysisData] = useState(null);
+  const [graphOptions, setGraphOptions] = useState(null);
 
   const value = {
     csvFile,
@@ -16,6 +17,8 @@ export const FGContextProvider = ({ children }) => {
     setCsvArray,
     analysisData,
     setAnalysisData,
+    graphOptions,
+    setGraphOptions,
   };
 
   return <FGContext.Provider value={value}>{children}</FGContext.Provider>;

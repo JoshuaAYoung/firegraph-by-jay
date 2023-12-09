@@ -3,22 +3,24 @@
   text-align: center;
   margin: 0;
   height: auto;
-  position: absolute;
-  bottom: 0;
-  z-index: 3;
   background: #6d5b5b;
-  border-top: 4mm ridge rgb(207, 115, 45);
+  border-top: 3mm ridge rgb(207, 115, 45);
+  align-self: flex-end;
 }
 
-.socialImage {
-  width: 4.5rem;
+.socialIcon {
+  color: #272727;
+  margin: 0 12px;
+}
+
+.socialIcon:hover {
+  color: #ffaa00;
 }
 
 .socialContainer {
   display: flex;
-  justify-content: space-evenly;
-  padding-top: 2rem;
-  max-width: 100rem;
+  justify-content: center;
+  padding-top: 1rem;
   margin: 0 auto;
 }
 
@@ -28,11 +30,10 @@
 }
 
 .copyright {
-  margin-top: 1em;
+  margin-top: .5em;
   padding-bottom: 1em;
   font-size: .8rem;
-}
-
-.portLink {
-  color: black;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  color: #272727;
 }
