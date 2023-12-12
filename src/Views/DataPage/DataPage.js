@@ -13,7 +13,7 @@ import Select from '../../Molecules/Select/Select';
 const DataPage = () => {
   // Hook(s)
   const {
-    csvArray,
+    csvParsedArray,
     analysisData,
     setAnalysisData,
     graphOptions,
@@ -34,49 +34,55 @@ const DataPage = () => {
 
   // Effect(s)
   useEffect(() => {
-    if (csvArray && !analysisData) {
+    if (csvParsedArray && !analysisData) {
       // analyze data from csv array
-      const analyzedData = analyzeCsv(csvArray);
+      const analyzedData = analyzeCsv(csvParsedArray);
       setAnalysisData(analyzedData);
 
-      // set the thermocouple and output select options on first render
-      const optionsTCArray = [];
-      const defaultTCArray = [];
-      const optionsOutArray = [];
+      console.log('datapage csvParsedArray', csvParsedArray, analyzedData);
 
-      averageTempKeyArray.forEach((key, index) => {
-        if (key.includes('Temp') && analyzedData[key] !== 0) {
-          optionsTCArray.push({
-            value: index + 1,
-            title: `TC${index + 1} (${analyzedData[key]}° avg.)`,
-          });
-          defaultTCArray.push(index + 1);
-        }
-      });
+      if (analyzedData && analyzedData.length) {
+        // set the thermocouple and output select options on first render
+        const optionsTCArray = [];
+        const defaultTCArray = [];
+        const optionsOutArray = [];
 
-      averageOutKeyArray.forEach((key, index) => {
-        if (key.includes('Out') && analyzedData[key] !== 0) {
-          optionsOutArray.push({
-            value: index + 1,
-            title: `Out${index + 1} (${analyzedData[key]}% avg.)`,
-          });
-        }
-      });
+        averageTempKeyArray.forEach((key, index) => {
+          if (key.includes('Temp') && analyzedData[key] !== 0) {
+            optionsTCArray.push({
+              value: index + 1,
+              title: `TC${index + 1} (${analyzedData[key]}° avg.)`,
+            });
+            defaultTCArray.push(index + 1);
+          }
+        });
 
-      const optionsSegmentsArray = analyzedData.segments.map((segment) => {
-        return { value: segment.number, title: `Segment ${segment.number}` };
-      });
+        averageOutKeyArray.forEach((key, index) => {
+          if (key.includes('Out') && analyzedData[key] !== 0) {
+            optionsOutArray.push({
+              value: index + 1,
+              title: `Out${index + 1} (${analyzedData[key]}% avg.)`,
+            });
+          }
+        });
 
-      setOptionsTC(optionsTCArray);
-      setDefaultTC(defaultTCArray);
-      setOptionsOut(optionsOutArray);
-      setOptionsSegments(optionsSegmentsArray);
-      setGraphOptions({
-        tcs: defaultTCArray,
-        avg: true,
-        align: optionsSegmentsArray[0].value,
-        out: [],
-      });
+        const optionsSegmentsArray = analyzedData.segments.map((segment) => {
+          return { value: segment.number, title: `Segment ${segment.number}` };
+        });
+
+        setOptionsTC(optionsTCArray);
+        setDefaultTC(defaultTCArray);
+        setOptionsOut(optionsOutArray);
+        setOptionsSegments(optionsSegmentsArray);
+        setGraphOptions({
+          tcs: defaultTCArray,
+          avg: true,
+          align: optionsSegmentsArray[0].value,
+          out: [],
+        });
+      }
+    } else {
+      // SHOW ERROR MODAL
     }
   }, []);
 
@@ -123,6 +129,7 @@ const DataPage = () => {
   };
 
   if (!analysisData) {
+    // SHOW ERROR MODAL
     return <CircularProgress />;
   }
 

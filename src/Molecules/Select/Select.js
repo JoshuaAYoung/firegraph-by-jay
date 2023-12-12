@@ -8,7 +8,6 @@ import {
   FormLabel,
 } from '@mui/joy';
 import './Select.css';
-import { FaInfoCircle } from 'react-icons/fa';
 import Tooltip from '../Tooltip/Tooltip';
 
 const Select = ({
