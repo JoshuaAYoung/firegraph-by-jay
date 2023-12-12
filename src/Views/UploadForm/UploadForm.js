@@ -57,6 +57,7 @@ const UploadForm = () => {
         header: true,
         skipEmptyLines: true,
         complete(results) {
+          console.log('results', results.data);
           setCsvArray(results.data);
           navigate('/results');
         },

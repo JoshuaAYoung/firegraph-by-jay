@@ -161,7 +161,6 @@ const LineGraph = () => {
         <Tooltip
           formatter={tooltipFormatter}
           labelFormatter={tooltipFormatter}
-          
         />
         <Legend />
         <Line
@@ -200,16 +199,16 @@ const LineGraph = () => {
             })
           : graphOptions.tcs.length && (
               <Line
-            name="Actual"
-            type="linear"
-            dataKey="temp2"
-            stroke={tcColorArray[2]}
-            activeDot={{ r: 8 }}
-            dot={false}
-            strokeWidth={3}
-            yAxisId="left"
-            animationDuration={3000}
-              />
+                name="Actual"
+                type="linear"
+                dataKey="temp2"
+                stroke={tcColorArray[2]}
+                activeDot={{ r: 8 }}
+                dot={false}
+                strokeWidth={3}
+                yAxisId="left"
+                animationDuration={3000}
+          />
             )}
         {outputOptionsLength !== 0 && (
           <>
