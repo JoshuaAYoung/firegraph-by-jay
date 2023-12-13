@@ -4,10 +4,14 @@ export const parseISODateString = (dateString) => {
   if (dateString) {
     const [date, time] = dateString.split('T');
     const dateObj = parse(date, 'yyyy-M-d', new Date());
+    console.log('dateObj', dateObj === 'Invalid Date');
+    if (dateObj instanceof Date && !Number.isNaN(dateObj)) {
+      return '';
+    }
     const dateISO = format(dateObj, 'yyyy-MM-dd');
     return new Date(`${dateISO}T${time}`);
   }
-  return '--';
+  return '';
 };
 
 export const minutesToHourString = (minutes) => {

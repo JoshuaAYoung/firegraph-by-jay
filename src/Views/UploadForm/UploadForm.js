@@ -2,19 +2,12 @@
 // High Priority
 // General data - look at Grid component
 // Table - Look at collapsible row example from Joi - Striped - TABLE DATA CHANGES WHEN YOU CHANGE DROPDOWN FOR TC
-// x button here on the input to clear the current file (from state too)
-// Multi file upload for longer firings (what's the ui for this look like? - maybe a plus button next to the input with a tooltip? Tooltip component)
 // Note about how hold data sometimes isn't in there (like at the end of my first glaze fire csv) - info button on last segment hold cell instead of data?
 // deviation from target ramp in last 200 degrees!!! (can we make this work for C and F?)
-// 3 dropdowns above the graph (in some sort of header?)
-// - dropdown to align segment! - in the header next to the TC selection?
-// - TC selection dropdown - show the average temp for each TC in the dropdown - info button to tell you what this is - Joi Select with multiple prop - 3TC max
-//    - Need info explaining that the TC selection also affects the data at the bottom of the page
-//    - have some sort of checkbox with info tooltip so that user can select to average the TC's or show each on the graph
-// - Out# multi selection dropdown - if one selected, turns the graph into biaxial (see example), and shows you a line for each output percentage with the % y axis on the right
 
-// Low Priority
 // SMALL FRY
+// Adjust colors of outputs? Too close?
+// plus button on uploadform just opens the file upload and then creates a button after you select one. Just skip default values
 // - media query for header flexbox to go column, with lots of vertical margin
 // expander thing to view the whole CSV at bottom of FiringGraph page (what lib?)
 // icon button with tooltips all over the place (table headers, and other values that aren't self explanatory)
@@ -38,16 +31,18 @@ import Tooltip from '../../Molecules/Tooltip/Tooltip';
 const UploadForm = () => {
   // Hook(s)
   const defaultButtonTitle = 'Choose a file...';
-  const { csvRawArray, setCsvRawArray, setCsvParsedArray, setAnalysisData } =
-    useFGContext();
+  const {
+    csvRawArray,
+    setCsvRawArray,
+    csvParsedArray,
+    setCsvParsedArray,
+    setAnalysisData,
+    resetState,
+  } = useFGContext();
   const [uploadButtonArray, setUploadButtonArray] = useState([
     { title: defaultButtonTitle },
   ]);
   const [hasErrors, setHasErrors] = useState(false);
-
-  if (csvRawArray && csvRawArray.length) {
-    console.log('csvRawArray', csvRawArray);
-  }
 
   const navigate = useNavigate();
 
@@ -67,7 +62,6 @@ const UploadForm = () => {
   // Function(s)
   const chooseFile = (event, index) => {
     setCsvRawArray([...csvRawArray, event.target.files[0]]);
-    console.log('uploadButtonArrayChooseFile', uploadButtonArray);
     const newUploadButtonArray = uploadButtonArray.filter((item, ind) => {
       return item.title !== defaultButtonTitle && ind !== index;
     });
@@ -76,31 +70,56 @@ const UploadForm = () => {
     setUploadButtonArray(newUploadButtonArray);
   };
 
-  const parseCsvArray = async (event) => {
+  const parseCsvArray = (event) => {
     event.preventDefault();
     const parsedFileArray = [];
+    // the second file contains a duplicate of a lot of data (starting at a "block continue" entry)
+    // This allows us to replace a certain number of rows from the previous file when adding the new one
+    const blockContinueRowArray = [];
 
     if (csvRawArray.length) {
-      csvRawArray.forEach((csv) => {
-        console.log('parsing one!');
-        Papa.parse(csv, {
-          header: true,
-          skipEmptyLines: true,
-          complete(results) {
-            parsedFileArray.push(...results.data);
-          },
-          error(_error) {
-            console.alert('ERROR');
-            setHasErrors(true);
-          },
-        });
-      });
+      Promise.all(
+        csvRawArray.map(
+          (csv) =>
+            // Create a new promise (or a promise factory), that would add a parameter with a boolean to toss on line 104 if condition, so only runs on subsequent
+            new Promise((resolve, reject) => {
+              let isFirstStep = true;
+              return Papa.parse(csv, {
+                header: true,
+                skipEmptyLines: true,
+                step: (row) => {
+                  if (isFirstStep && blockContinueRowArray[row.data.time]) {
+                    // Do the thing where we shift the array
+                    parsedFileArray.splice(
+                      blockContinueRowArray[row.data.time]
+                    );
+                    isFirstStep = false;
+                  }
 
-      console.log('parsedFileArray', parsedFileArray);
-      if (!hasErrors) {
-        await setCsvParsedArray(parsedFileArray);
-        navigate('/results');
-      }
+                  if (row.data.event === 'block continue') {
+                    blockContinueRowArray[row.data.time] =
+                      parsedFileArray.length;
+                  }
+
+                  parsedFileArray.push(row.data);
+                },
+                complete: () => {
+                  resolve();
+                },
+                error: reject,
+              });
+            })
+        )
+      )
+        .then(() => {
+          setCsvParsedArray(parsedFileArray);
+        })
+        .catch((error) => {
+          console.log('Papaparse error:', error);
+          setHasErrors(true);
+        });
+    } else {
+      setHasErrors(true);
     }
   };
 
@@ -109,22 +128,13 @@ const UploadForm = () => {
   };
 
   const removeFile = (index) => {
-    console.log(
-      'filetoremove',
-      index,
-      uploadButtonArray[index],
-      csvRawArray[index]
-    );
-
     const newUploadButtonArray = uploadButtonArray.filter((_item, ind) => {
       return ind !== index;
     });
 
     if (newUploadButtonArray.length) {
-      console.log('yes');
       setUploadButtonArray(newUploadButtonArray);
     } else if (!newUploadButtonArray.length) {
-      console.log('no');
       setUploadButtonArray([{ title: defaultButtonTitle }]);
     }
 
@@ -137,12 +147,16 @@ const UploadForm = () => {
   // Effect(s)
 
   useEffect(() => {
-    setCsvRawArray([]);
-    setCsvParsedArray(null);
-    setAnalysisData(null);
+    resetState();
     setUploadButtonArray([{ title: defaultButtonTitle }]);
     setHasErrors(false);
   }, []);
+
+  useEffect(() => {
+    if (csvParsedArray && csvParsedArray.length && csvRawArray.length) {
+      navigate('/results');
+    }
+  }, [csvParsedArray]);
 
   // Render Functions(s)
   const renderUploadButton = (title, index) => {

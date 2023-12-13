@@ -6,9 +6,23 @@ export default FGContext;
 
 export const FGContextProvider = ({ children }) => {
   const [csvRawArray, setCsvRawArray] = useState([]);
-  const [csvParsedArray, setCsvParsedArray] = useState(null);
+  const [csvParsedArray, setCsvParsedArray] = useState([]);
   const [analysisData, setAnalysisData] = useState(null);
-  const [graphOptions, setGraphOptions] = useState(null);
+  const [combinedChartData, setCombinedChartData] = useState([]);
+  const [graphOptions, setGraphOptions] = useState({
+    tcs: [],
+    avg: true,
+    align: '1',
+    out: [],
+  });
+
+  const resetState = () => {
+    setCsvRawArray([]);
+    setCsvParsedArray([]);
+    setAnalysisData(null);
+    setGraphOptions({ tcs: [], avg: true, align: '1', out: [] });
+    setCombinedChartData([]);
+  };
 
   const value = {
     csvRawArray,
@@ -17,8 +31,11 @@ export const FGContextProvider = ({ children }) => {
     setCsvParsedArray,
     analysisData,
     setAnalysisData,
+    combinedChartData,
+    setCombinedChartData,
     graphOptions,
     setGraphOptions,
+    resetState,
   };
 
   return <FGContext.Provider value={value}>{children}</FGContext.Provider>;

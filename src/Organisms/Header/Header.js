@@ -8,19 +8,23 @@ import { useFGContext } from '../../context/FGContext';
 import { parseISODateString } from '../../Utils/dateUtils/dateUtils';
 
 const Header = ({ downloadPDF }) => {
-  const { analysisData } = useFGContext();
-
+  const { analysisData, resetState } = useFGContext();
   const programDate =
     analysisData && analysisData.startTime
-      ? format(parseISODateString(analysisData.startTime), 'MM/dd/yyyy')
-      : '';
+      ? parseISODateString(analysisData.startTime)
+      : // ? format(parseISODateString(analysisData.startTime), 'MM/dd/yyyy')
+        '';
 
   const programTitle =
     analysisData && analysisData.programName ? analysisData.programName : '';
 
+  const resetStateValues = () => {
+    resetState();
+  };
+
   return (
     <div className="navBarContainer">
-      <NavLink to="/" className="logoLink">
+      <NavLink to="/" className="logoLink" onClick={resetStateValues}>
         <img
           src="/assets/firing-graph-logo.svg"
           alt="firing graph logo"
