@@ -5,7 +5,12 @@ import { GiElectric } from 'react-icons/gi';
 import { FaChartLine } from 'react-icons/fa6';
 import { LuAlignStartVertical } from 'react-icons/lu';
 import { useFGContext } from '../../context/FGContext';
-import { analyzeCsv, calculateActualRamp } from '../../Utils/csvUtils/csvUtils';
+import {
+  analyzeCsv,
+  calculateActualRamp,
+  composeTargetChartData,
+  zipArrayOfObjects,
+} from '../../Utils/csvUtils/csvUtils';
 import LineGraph from '../../Organisms/LineGraph/LineGraph';
 import './DataPage.css';
 import Select from '../../Molecules/Select/Select';
@@ -13,16 +18,19 @@ import Select from '../../Molecules/Select/Select';
 const DataPage = () => {
   // Hook(s)
   const {
-    csvArray,
+    csvParsedArray,
     analysisData,
     setAnalysisData,
     graphOptions,
     setGraphOptions,
+    setCombinedChartData,
   } = useFGContext();
   const [optionsTC, setOptionsTC] = useState([]);
   const [optionsOut, setOptionsOut] = useState([]);
   const [optionsSegments, setOptionsSegments] = useState([]);
+  const [segmentLookupTable, setSegmentLookupTable] = useState([]);
   const [defaultTC, setDefaultTC] = useState([]);
+  const [segmentOffset, setSegmentOffset] = useState(0);
 
   // Computed Var(s)
   const averageTempKeyArray = ['averageTemp1', 'averageTemp2', 'averageTemp3'];
@@ -33,54 +41,104 @@ const DataPage = () => {
   ];
 
   // Effect(s)
+  // Initial
   useEffect(() => {
-    if (csvArray && !analysisData) {
+    if (csvParsedArray && csvParsedArray.length && !analysisData) {
       // analyze data from csv array
-      const analyzedData = analyzeCsv(csvArray);
+      const analyzedData = analyzeCsv(csvParsedArray);
       setAnalysisData(analyzedData);
 
-      // set the thermocouple and output select options on first render
-      const optionsTCArray = [];
-      const defaultTCArray = [];
-      const optionsOutArray = [];
+      // better than using object(keys)? Mebe
+      if (analyzedData && analyzedData.preFireInfo) {
+        // set the thermocouple and output select options on first render
+        const optionsTCArray = [];
+        const defaultTCArray = [];
+        const optionsOutArray = [];
 
-      averageTempKeyArray.forEach((key, index) => {
-        if (key.includes('Temp') && analyzedData[key] !== 0) {
-          optionsTCArray.push({
-            value: index + 1,
-            title: `TC${index + 1} (${analyzedData[key]}° avg.)`,
+        averageTempKeyArray.forEach((key, index) => {
+          if (key.includes('Temp') && analyzedData[key] !== 0) {
+            optionsTCArray.push({
+              value: index + 1,
+              title: `TC${index + 1} (${analyzedData[key]}° avg.)`,
+            });
+            defaultTCArray.push(index + 1);
+          }
+        });
+
+        averageOutKeyArray.forEach((key, index) => {
+          if (key.includes('Out') && analyzedData[key] !== 0) {
+            optionsOutArray.push({
+              value: index + 1,
+              title: `Out${index + 1} (${analyzedData[key]}% avg.)`,
+            });
+          }
+        });
+
+        // Options to pass to select for align segment
+        const optionsSegmentsArray = [];
+        // Lookup table to use to find minute to shift for align segment
+        const segmentLookupObject = {};
+        analyzedData.segments.forEach((segment) => {
+          optionsSegmentsArray.push({
+            value: segment.number,
+            title: `Segment ${segment.number}`,
+            minute: segment.segmentTicks[0].time,
           });
-          defaultTCArray.push(index + 1);
-        }
-      });
+          segmentLookupObject[segment.number] = segment.segmentTicks[0].time;
+        });
 
-      averageOutKeyArray.forEach((key, index) => {
-        if (key.includes('Out') && analyzedData[key] !== 0) {
-          optionsOutArray.push({
-            value: index + 1,
-            title: `Out${index + 1} (${analyzedData[key]}% avg.)`,
-          });
-        }
-      });
-
-      const optionsSegmentsArray = analyzedData.segments.map((segment) => {
-        return { value: segment.number, title: `Segment ${segment.number}` };
-      });
-
-      setOptionsTC(optionsTCArray);
-      setDefaultTC(defaultTCArray);
-      setOptionsOut(optionsOutArray);
-      setOptionsSegments(optionsSegmentsArray);
-      setGraphOptions({
-        tcs: defaultTCArray,
-        avg: true,
-        align: optionsSegmentsArray[0].value,
-        out: [],
-      });
+        setOptionsTC(optionsTCArray);
+        setDefaultTC(defaultTCArray);
+        setOptionsOut(optionsOutArray);
+        setOptionsSegments(optionsSegmentsArray);
+        setSegmentLookupTable(segmentLookupObject);
+        setGraphOptions({
+          tcs: defaultTCArray,
+          avg: true,
+          align: optionsSegmentsArray[0].value || '1',
+          out: [],
+        });
+      }
+    } else {
+      // SHOW ERROR MODAL
     }
   }, []);
 
   useEffect(() => {
+    // Set combined chart data (on mount and segment align change)
+    if (analysisData) {
+      const actualData = analysisData.segments
+        .map((segment) => {
+          return segment.segmentTicks.concat(segment.hold.holdTicks);
+        })
+        .flat(1);
+
+      const { targetSegmentLookup, targetDataArrayWithApprox } =
+        composeTargetChartData(analysisData);
+
+      // shift for the lines based on difference in time between target and actual at start of segment
+      const arrayOffset =
+        Number(segmentLookupTable[graphOptions.align]) -
+        Number(targetSegmentLookup[graphOptions.align]);
+
+      const combinedData = zipArrayOfObjects(
+        targetDataArrayWithApprox,
+        actualData,
+        graphOptions.align === '1' ? 0 : arrayOffset,
+        graphOptions.tcs
+      );
+
+      console.log('arrayOffset', arrayOffset);
+      setSegmentOffset(arrayOffset);
+
+      setCombinedChartData(combinedData);
+
+      console.log('combined', combinedData);
+    }
+  }, [analysisData, graphOptions.align, graphOptions.tcs]);
+
+  useEffect(() => {
+    // parse averages
     console.log('analdata', analysisData);
     if (analysisData && analysisData.segments) {
       const segmentRampActual = [];
@@ -123,6 +181,7 @@ const DataPage = () => {
   };
 
   if (!analysisData) {
+    // SHOW ERROR MODAL
     return <CircularProgress />;
   }
 
@@ -160,7 +219,7 @@ const DataPage = () => {
               defaultValue="Average"
               onChange={handleAvgChange}
               icon={<FaChartLine />}
-              accessibilityLabel="avg"
+              // accessibilityLabel="avg"
               label="TC Format"
               tooltipText="Select to either average TC temps in graph or to show separate lines for each TC. NOTE: does not affect table data."
               helperText={
@@ -191,7 +250,7 @@ const DataPage = () => {
             <Select
               options={optionsSegments}
               defaultValue={
-                optionsSegments.length ? optionsSegments[0].value : 1
+                optionsSegments.length ? optionsSegments[0].value : '1'
               }
               onChange={handleAlignChange}
               icon={<LuAlignStartVertical />}
@@ -210,7 +269,7 @@ const DataPage = () => {
         </Grid>
       </div>
       <div className="graphContainer">
-        <LineGraph />
+        <LineGraph segmentOffset={segmentOffset} />
       </div>
     </div>
   );

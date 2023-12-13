@@ -8,7 +8,6 @@ import {
   FormLabel,
 } from '@mui/joy';
 import './Select.css';
-import { FaInfoCircle } from 'react-icons/fa';
 import Tooltip from '../Tooltip/Tooltip';
 
 const Select = ({
@@ -74,8 +73,11 @@ const Select = ({
             );
           }}
         >
-          {options.map((option) => (
-            <Option key={option.value} value={option.value}>
+          {options.map((option, index) => (
+            <Option
+              key={option.title + option.value + index}
+              value={option.value}
+            >
               {option.title}
             </Option>
           ))}

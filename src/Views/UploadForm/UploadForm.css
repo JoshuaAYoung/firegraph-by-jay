@@ -41,6 +41,7 @@
   align-self: center;
 }
 
-.uploadButtonsContainer > label:first-child {
-  margin-bottom: 15px;
+.chooseFileButtons {
+  margin-bottom: 10px;
+  display: flex;
 }

@@ -360,6 +360,7 @@ export const minutesFromRamp = (targetStartTemp, targetEndTemp, targetRamp) => {
 
 export const composeTargetChartData = (analysisData) => {
   const targetData = [{ time: 0, targetTemp: 0 }];
+  const targetSegmentLookup = {};
   let minuteCounter = 0;
 
   // graph points in the array for segment
@@ -372,6 +373,9 @@ export const composeTargetChartData = (analysisData) => {
       segment.targetTemp,
       segment.targetRamp
     );
+
+    targetSegmentLookup[segment.number] = minuteCounter;
+
     minuteCounter += segmentMinutes;
     targetData.push({
       time: minuteCounter,
@@ -418,25 +422,48 @@ export const composeTargetChartData = (analysisData) => {
     }
   }
 
-  return targetDataArrayWithApprox;
+  return { targetSegmentLookup, targetDataArrayWithApprox };
 };
 
-export const zipArrayOfObjects = (array1, array2) => {
+const zip = (a, b) => {
+  const largerArray = a.length > b.length ? a : b;
+  const smallerArray = a.length < b.length ? a : b;
+
+  return largerArray.map((x, i) => {
+    // setting the time on each of the array items here for segment align
+    const xClone = { ...x, time: i };
+    const smallerClone = { ...smallerArray[i], time: i };
+
+    return [xClone, smallerClone];
+  });
+};
+
+export const zipArrayOfObjects = (
+  targetArray,
+  actualArray,
+  arrayOffset,
+  selectedTCs
+) => {
   // Combine the two arrays by index, and combine the object at that index
   // i.e. {[time: 0, temp1: 20} ...] + {[time: 0, targetTemp: 25} ...] = {[{time: 0, temp1: 20, targetTemp: 25} ...]
-  const zip = (a, b) => {
-    const largerArray = a.length > b.length ? a : b;
-    const smallerArray = a.length < b.length ? a : b;
+  const emptyOffsetArray = arrayOffset ? new Array(Math.abs(arrayOffset)) : [];
 
-    return largerArray.map((x, i) => [x, smallerArray[i]]);
-  };
+  // segment align offset
+  if (arrayOffset < 0) {
+    actualArray.unshift(...emptyOffsetArray);
+  } else if (arrayOffset > 0) {
+    targetArray.unshift(...emptyOffsetArray);
+  }
 
-  return zip(array1, array2).map((obj) => Object.assign({}, ...obj));
+  return zip(targetArray, actualArray).map((obj) => {
+    // average the selected TCs and add a new property "avgTemp"
+    let avgTempCount = 0;
+    selectedTCs.forEach((tcNumber) => {
+      avgTempCount += Number(obj[0][`temp${tcNumber}`]);
+    });
+    const avgTempObj = {
+      avgTemp: Math.round(avgTempCount / selectedTCs.length),
+    };
+    return Object.assign({}, ...obj, avgTempObj);
+  });
 };
-
-export const composeCombinedChartData = (
-  targetChartArray,
-  actualChartArray,
-  tempArray,
-  average
-) => {};

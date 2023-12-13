@@ -5,20 +5,37 @@ const FGContext = React.createContext(null);
 export default FGContext;
 
 export const FGContextProvider = ({ children }) => {
-  const [csvFile, setCsvFile] = useState(null);
-  const [csvArray, setCsvArray] = useState(null);
+  const [csvRawArray, setCsvRawArray] = useState([]);
+  const [csvParsedArray, setCsvParsedArray] = useState([]);
   const [analysisData, setAnalysisData] = useState(null);
-  const [graphOptions, setGraphOptions] = useState(null);
+  const [combinedChartData, setCombinedChartData] = useState([]);
+  const [graphOptions, setGraphOptions] = useState({
+    tcs: [],
+    avg: true,
+    align: '1',
+    out: [],
+  });
+
+  const resetState = () => {
+    setCsvRawArray([]);
+    setCsvParsedArray([]);
+    setAnalysisData(null);
+    setGraphOptions({ tcs: [], avg: true, align: '1', out: [] });
+    setCombinedChartData([]);
+  };
 
   const value = {
-    csvFile,
-    setCsvFile,
-    csvArray,
-    setCsvArray,
+    csvRawArray,
+    setCsvRawArray,
+    csvParsedArray,
+    setCsvParsedArray,
     analysisData,
     setAnalysisData,
+    combinedChartData,
+    setCombinedChartData,
     graphOptions,
     setGraphOptions,
+    resetState,
   };
 
   return <FGContext.Provider value={value}>{children}</FGContext.Provider>;

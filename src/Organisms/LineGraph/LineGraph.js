@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   LineChart,
   Line,
@@ -13,12 +13,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useFGContext } from '../../context/FGContext';
 import './LineGraph.css';
-import { composeTargetChartData } from '../../Utils/csvUtils/csvUtils';
 import { minutesToHourString } from '../../Utils/dateUtils/dateUtils';
 
-const LineGraph = () => {
-  const { analysisData, graphOptions } = useFGContext();
-  const [combinedChartData, setCombinedChartData] = useState([]);
+const LineGraph = ({ segmentOffset }) => {
+  const { analysisData, graphOptions, combinedChartData } = useFGContext();
 
   const navigate = useNavigate();
 
@@ -26,37 +24,6 @@ const LineGraph = () => {
 
   const tcColorArray = ['#003f5c', '#444e86', '#955196'];
   const outColorArray = ['#dd5182', '#ff6e54', '#ffa600'];
-
-  useEffect(() => {
-    if (analysisData) {
-      const actualData = analysisData.segments
-        .map((segment) => {
-          return segment.segmentTicks.concat(segment.hold.holdTicks);
-        })
-        .flat(1);
-
-      const targetData = composeTargetChartData(analysisData);
-
-      // Combine the two arrays by index, and combine the object at that index
-      // i.e. {[time: 0, temp1: 20} ...] + {[time: 0, targetTemp: 25} ...] = {[{time: 0, temp1: 20, targetTemp: 25} ...]
-      const zip = (a, b) => {
-        const largerArray = a.length > b.length ? a : b;
-        const smallerArray = a.length < b.length ? a : b;
-
-        return largerArray.map((x, i) => [x, smallerArray[i]]);
-      };
-
-      const combinedData = zip(targetData, actualData).map((obj) =>
-        Object.assign({}, ...obj)
-      );
-
-      setCombinedChartData(combinedData);
-
-      console.log('actualData', actualData);
-      console.log('target', composeTargetChartData(analysisData));
-      console.log('combined', combinedData);
-    }
-  }, [analysisData]);
 
   // useEffect(() => {
   //   console.log('analysisData', analysisData);
@@ -105,7 +72,7 @@ const LineGraph = () => {
     return `Time : ${minutesToHourString(value)} hours`;
   };
 
-  console.log('graph', graphOptions, outputOptionsLength);
+  console.log('graph', graphOptions, outputOptionsLength, segmentOffset);
 
   return (
     <ResponsiveContainer width="100%" height="100%" marginTop={20}>
@@ -120,12 +87,16 @@ const LineGraph = () => {
         }}
         data={combinedChartData}
       >
-        {analysisData.segments.map((segment) => {
+        {analysisData.segments.map((segment, index) => {
           return (
             <ReferenceLine
               isFront
-              key={segment.number}
-              x={segment.segmentTicks[0].time}
+              key={segment.number + index}
+              x={
+                segmentOffset < 0
+                  ? segment.segmentTicks[0].time + Math.abs(segmentOffset)
+                  : segment.segmentTicks[0].time
+              }
               stroke="red"
               label={<CustomReferenceLabel value={segment.number} />}
               strokeDasharray="6 3"
@@ -148,13 +119,12 @@ const LineGraph = () => {
           interval={59}
         />
         <YAxis
-          // dataKey="temp2" // Change to average? Or longest? What does this do exactly?
           type="number"
           padding={{ top: 40 }}
           label={{
             value: 'Temp',
             angle: -90,
-            offset: 2000,
+            // offset: 2000,
           }}
           yAxisId="left"
         />
@@ -179,11 +149,11 @@ const LineGraph = () => {
           isAnimationActive={false}
         />
         {!graphOptions.avg
-          ? graphOptions.tcs.map((tcNumber) => {
+          ? graphOptions.tcs.map((tcNumber, index) => {
               console.log('tcNumber???', tcNumber);
               return (
                 <Line
-                  key={`tc${tcNumber}`}
+                  key={`tc${tcNumber} - ${index}`}
                   name={`Actual TC${tcNumber}`}
                   type="linear"
                   dataKey={`temp${tcNumber}`}
@@ -201,14 +171,14 @@ const LineGraph = () => {
               <Line
                 name="Actual"
                 type="linear"
-                dataKey="temp2"
+                dataKey="avgTemp"
                 stroke={tcColorArray[2]}
                 activeDot={{ r: 8 }}
                 dot={false}
                 strokeWidth={3}
                 yAxisId="left"
                 animationDuration={3000}
-          />
+              />
             )}
         {outputOptionsLength !== 0 && (
           <>
@@ -226,10 +196,10 @@ const LineGraph = () => {
               scale="linear"
               domain={[0, 100]}
             />
-            {graphOptions.out.map((outputNumber) => {
+            {graphOptions.out.map((outputNumber, index) => {
               return (
                 <Line
-                  key={`out${outputNumber}`}
+                  key={`out${outputNumber} - ${index}`}
                   name={`Output ${outputNumber}`}
                   type="linear"
                   dataKey={`out${outputNumber}`}
