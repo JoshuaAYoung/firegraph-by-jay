@@ -14,6 +14,7 @@ import {
 import LineGraph from '../../Organisms/LineGraph/LineGraph';
 import './DataPage.css';
 import Select from '../../Molecules/Select/Select';
+import DataContainer from '../../Organisms/DataContainer/DataContainer';
 
 const DataPage = () => {
   // Hook(s)
@@ -270,6 +271,9 @@ const DataPage = () => {
       </div>
       <div className="graphContainer">
         <LineGraph segmentOffset={segmentOffset} />
+      </div>
+      <div>
+        <DataContainer />
       </div>
     </div>
   );

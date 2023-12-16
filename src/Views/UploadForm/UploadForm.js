@@ -4,6 +4,7 @@
 // Table - Look at collapsible row example from Joi - Striped - TABLE DATA CHANGES WHEN YOU CHANGE DROPDOWN FOR TC
 // Note about how hold data sometimes isn't in there (like at the end of my first glaze fire csv) - info button on last segment hold cell instead of data?
 // deviation from target ramp in last 200 degrees!!! (can we make this work for C and F?)
+// QUESTION: should we be thinking about including setpoint data here???
 
 // SMALL FRY
 // Adjust colors of outputs? Too close?

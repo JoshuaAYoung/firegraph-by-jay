@@ -4,8 +4,7 @@ export const parseISODateString = (dateString) => {
   if (dateString) {
     const [date, time] = dateString.split('T');
     const dateObj = parse(date, 'yyyy-M-d', new Date());
-    console.log('dateObj', dateObj === 'Invalid Date');
-    if (dateObj instanceof Date && !Number.isNaN(dateObj)) {
+    if (!(dateObj instanceof Date) || isNaN(dateObj)) {
       return '';
     }
     const dateISO = format(dateObj, 'yyyy-MM-dd');

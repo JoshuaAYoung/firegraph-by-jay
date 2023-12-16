@@ -9,11 +9,12 @@ import { parseISODateString } from '../../Utils/dateUtils/dateUtils';
 
 const Header = ({ downloadPDF }) => {
   const { analysisData, resetState } = useFGContext();
-  const programDate =
-    analysisData && analysisData.startTime
-      ? parseISODateString(analysisData.startTime)
-      : // ? format(parseISODateString(analysisData.startTime), 'MM/dd/yyyy')
-        '';
+  const dateISO = analysisData
+    ? parseISODateString(analysisData.startTime)
+    : '';
+  const programDate = dateISO
+    ? format(parseISODateString(analysisData.startTime), 'MM/dd/yyyy')
+    : '';
 
   const programTitle =
     analysisData && analysisData.programName ? analysisData.programName : '';
