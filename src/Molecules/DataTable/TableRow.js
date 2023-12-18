@@ -56,7 +56,7 @@ function TableRow({ row }) {
         <td>{row.targetTemp}°</td>
         <td>
           {row.targetHoldTime || (
-            <Tooltip tooltipText="Segment hold information is often missing from the last, or last few, segments." />
+            <Tooltip tooltipText="Hold information is often missing from the log file for drop segments." />
           )}
         </td>
         <td>{row.actualDuration}</td>
