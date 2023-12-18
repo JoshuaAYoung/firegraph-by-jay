@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash';
+import { parseDateString } from '../dateUtils/dateUtils';
 
 export const analysisValuesTemplate = {
   preFireInfo: [],
@@ -151,14 +152,17 @@ export const analyzeCsv = (dataArray) => {
           // Adds an event in the case of a manual stop
           // Events might want to go in the segments array?
           analysisObj.events.push({
-            manualStop: `Firing was manually stopped during segment ${analysisObj.segments[0].number}`,
+            name: 'Manual Stop',
+            value: `During segment ${analysisObj.segments[0].number}`,
           });
           break;
         case 'skip step':
           // Adds an event in the case of a skip and notes that in the segment
           if (!row.name && row.time) {
+            const { isoDateWithTime } = parseDateString(row.time);
             analysisObj.events.push({
-              skipStep: `Segment ${analysisObj.segments[0].number} was skippped at ${row.time}`,
+              name: 'Segment Skip',
+              value: `Segment ${analysisObj.segments[0].number} at ${isoDateWithTime}`,
             });
             analysisObj.segments[0].skipped = true;
           }
@@ -305,22 +309,22 @@ export const analyzeCsv = (dataArray) => {
       totalMinuteCount += minuteCount;
 
       analysisObj.segments[index].averageTemp1 = Math.round(
-        temp1SegSum / minuteCount
+        temp1SegSum / minuteCount,
       );
       analysisObj.segments[index].averageTemp2 = Math.round(
-        temp2SegSum / minuteCount
+        temp2SegSum / minuteCount,
       );
       analysisObj.segments[index].averageTemp3 = Math.round(
-        temp3SegSum / minuteCount
+        temp3SegSum / minuteCount,
       );
       analysisObj.segments[index].averageOut1 = Math.round(
-        out1SegSum / minuteCount
+        out1SegSum / minuteCount,
       );
       analysisObj.segments[index].averageOut2 = Math.round(
-        out2SegSum / minuteCount
+        out2SegSum / minuteCount,
       );
       analysisObj.segments[index].averageOut3 = Math.round(
-        out3SegSum / minuteCount
+        out3SegSum / minuteCount,
       );
     });
 
@@ -343,14 +347,12 @@ export const calculateActualRamp = (
   actualHalfMinutes,
   startActualTemp,
   endActualTemp,
-  segmentNumber
 ) => {
   const hours = actualHalfMinutes / 2 / 60;
   const degreesRise = Number(endActualTemp) - Number(startActualTemp);
-  console.log(actualHalfMinutes, startActualTemp, endActualTemp, segmentNumber);
   // Note: toFixed converts to string
-  const degPerHour = (degreesRise / hours).toFixed(1);
-  return { [segmentNumber]: degPerHour };
+  const degPerHour = Math.round(degreesRise / hours);
+  return degPerHour;
 };
 
 export const minutesFromRamp = (targetStartTemp, targetEndTemp, targetRamp) => {
@@ -365,13 +367,11 @@ export const composeTargetChartData = (analysisData) => {
 
   // graph points in the array for segment
   analysisData.segments.forEach((segment, index) => {
-    const startTemp = analysisData.segments[index - 1]
-      ? analysisData.segments[index - 1].targetTemp
-      : 0;
+    const startTemp = analysisData.segments[index - 1]?.targetTemp || 0;
     const segmentMinutes = minutesFromRamp(
       startTemp,
       segment.targetTemp,
-      segment.targetRamp
+      segment.targetRamp,
     );
 
     targetSegmentLookup[segment.number] = minuteCounter;
@@ -442,7 +442,7 @@ export const zipArrayOfObjects = (
   targetArray,
   actualArray,
   arrayOffset,
-  selectedTCs
+  selectedTCs,
 ) => {
   // Combine the two arrays by index, and combine the object at that index
   // i.e. {[time: 0, temp1: 20} ...] + {[time: 0, targetTemp: 25} ...] = {[{time: 0, temp1: 20, targetTemp: 25} ...]
@@ -456,14 +456,18 @@ export const zipArrayOfObjects = (
   }
 
   return zip(targetArray, actualArray).map((obj) => {
+    // zip creates an array of the two objects, this combines those two into one obj
+    const combinedObject = Object.assign({}, ...obj);
+
     // average the selected TCs and add a new property "avgTemp"
     let avgTempCount = 0;
     selectedTCs.forEach((tcNumber) => {
-      avgTempCount += Number(obj[0][`temp${tcNumber}`]);
+      avgTempCount += Number(combinedObject[`temp${tcNumber}`]);
     });
-    const avgTempObj = {
+
+    return {
+      ...combinedObject,
       avgTemp: Math.round(avgTempCount / selectedTCs.length),
     };
-    return Object.assign({}, ...obj, avgTempObj);
   });
 };

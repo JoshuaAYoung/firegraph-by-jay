@@ -2,7 +2,7 @@ import React from 'react';
 import { IconButton, Tooltip as JoyTooltip } from '@mui/joy';
 import { FaInfoCircle } from 'react-icons/fa';
 
-const Tooltip = ({ tooltipText, placement, icon, onClick }) => {
+function Tooltip({ tooltipText, placement, icon, onClick, size, iconDims }) {
   const tooltipPlacement = placement || 'right-end';
   const iconComponent = icon || <FaInfoCircle />;
 
@@ -10,14 +10,20 @@ const Tooltip = ({ tooltipText, placement, icon, onClick }) => {
     <JoyTooltip
       title={tooltipText}
       placement={tooltipPlacement}
-      size="sm"
+      size={size || 'sm'}
       sx={{ maxWidth: '300px' }}
     >
-      <IconButton size="sm" onClick={onClick}>
+      <IconButton
+        size={size || 'sm'}
+        sx={{
+          '--IconButton-size': iconDims,
+        }}
+        onClick={onClick}
+      >
         {iconComponent}
       </IconButton>
     </JoyTooltip>
   );
-};
+}
 
 export default Tooltip;

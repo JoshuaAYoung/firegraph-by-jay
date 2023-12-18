@@ -15,7 +15,21 @@ import { useFGContext } from '../../context/FGContext';
 import './LineGraph.css';
 import { minutesToHourString } from '../../Utils/dateUtils/dateUtils';
 
-const LineGraph = ({ segmentOffset }) => {
+function CustomReferenceLabel(props) {
+  return (
+    <text
+      offset={props.offset}
+      x={props.viewBox.x - 10}
+      y={200}
+      className="verticalSegmentLabel"
+      textAnchor="middle"
+    >
+      Segment {props.value} Start
+    </text>
+  );
+}
+
+function LineGraph({ segmentOffset }) {
   const { analysisData, graphOptions, combinedChartData } = useFGContext();
 
   const navigate = useNavigate();
@@ -32,41 +46,26 @@ const LineGraph = ({ segmentOffset }) => {
   //   }
   // }, []);
 
-  const renderCustomAxisTick = (props) => {
-    return (
-      <text
-        x={props.x}
-        y={props.y + 15}
-        orientation={props.orientation}
-        textAnchor={props.textAnchor}
-      >
-        {props.payload.value / 60}
-      </text>
-    );
-  };
-
-  const CustomReferenceLabel = (props) => {
-    return (
-      <text
-        offset={props.offset}
-        x={props.viewBox.x - 10}
-        y={200}
-        className="verticalSegmentLabel"
-        textAnchor="middle"
-      >
-        Segment {props.value} Start
-      </text>
-    );
-  };
+  const renderCustomAxisTick = (props) => (
+    <text
+      x={props.x}
+      y={props.y + 15}
+      orientation={props.orientation}
+      textAnchor={props.textAnchor}
+    >
+      {props.payload.value / 60}
+    </text>
+  );
 
   const tooltipFormatter = (value, name, props) => {
     if (props && props.dataKey === 'targetTemp') {
       return [`${value}°`, `${name} Temp`];
     }
-    if (props && props.dataKey.includes('temp')) {
+    console.log(props);
+    if (props && props.dataKey.toLowerCase().includes('temp')) {
       return [`${value}°`, `${name} Temp${graphOptions.avg ? ' (avg.)' : ''}`];
     }
-    if (props && props.dataKey.includes('out')) {
+    if (props && props.dataKey.toLowerCase().includes('out')) {
       return [`${value}%`, `${name}`];
     }
     return `Time : ${minutesToHourString(value)} hours`;
@@ -87,23 +86,21 @@ const LineGraph = ({ segmentOffset }) => {
         }}
         data={combinedChartData}
       >
-        {analysisData.segments.map((segment, index) => {
-          return (
-            <ReferenceLine
-              isFront
-              key={segment.number + index}
-              x={
-                segmentOffset < 0
-                  ? segment.segmentTicks[0].time + Math.abs(segmentOffset)
-                  : segment.segmentTicks[0].time
-              }
-              stroke="red"
-              label={<CustomReferenceLabel value={segment.number} />}
-              strokeDasharray="6 3"
-              yAxisId="left"
-            />
-          );
-        })}
+        {analysisData.segments.map((segment, index) => (
+          <ReferenceLine
+            isFront
+            key={segment.number + index}
+            x={
+              segmentOffset < 0
+                ? segment.segmentTicks[0].time + Math.abs(segmentOffset)
+                : segment.segmentTicks[0].time
+            }
+            stroke="red"
+            label={<CustomReferenceLabel value={segment.number} />}
+            strokeDasharray="6 3"
+            yAxisId="left"
+          />
+        ))}
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey="time"
@@ -124,7 +121,6 @@ const LineGraph = ({ segmentOffset }) => {
           label={{
             value: 'Temp',
             angle: -90,
-            // offset: 2000,
           }}
           yAxisId="left"
         />
@@ -183,7 +179,6 @@ const LineGraph = ({ segmentOffset }) => {
         {outputOptionsLength !== 0 && (
           <>
             <YAxis
-              // dataKey="out2"
               type="number"
               padding={{ top: 40 }}
               label={{
@@ -196,28 +191,26 @@ const LineGraph = ({ segmentOffset }) => {
               scale="linear"
               domain={[0, 100]}
             />
-            {graphOptions.out.map((outputNumber, index) => {
-              return (
-                <Line
-                  key={`out${outputNumber} - ${index}`}
-                  name={`Output ${outputNumber}`}
-                  type="linear"
-                  dataKey={`out${outputNumber}`}
-                  // stroke="#0b84a5"
-                  stroke={outColorArray[outputNumber - 1]}
-                  activeDot={{ r: 8 }}
-                  dot={false}
-                  strokeWidth={3}
-                  yAxisId="right"
-                  animationDuration={3000}
-                />
-              );
-            })}
+            {graphOptions.out.map((outputNumber, index) => (
+              <Line
+                key={`out${outputNumber} - ${index}`}
+                name={`Output ${outputNumber}`}
+                type="linear"
+                dataKey={`out${outputNumber}`}
+                // stroke="#0b84a5"
+                stroke={outColorArray[outputNumber - 1]}
+                activeDot={{ r: 8 }}
+                dot={false}
+                strokeWidth={3}
+                yAxisId="right"
+                animationDuration={3000}
+              />
+            ))}
           </>
         )}
       </LineChart>
     </ResponsiveContainer>
   );
-};
+}
 
 export default LineGraph;

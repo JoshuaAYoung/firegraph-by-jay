@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, Grid } from '@mui/joy';
+import { Box, CircularProgress, Grid } from '@mui/joy';
 import { FaTemperatureHigh } from 'react-icons/fa';
 import { GiElectric } from 'react-icons/gi';
 import { FaChartLine } from 'react-icons/fa6';
@@ -7,7 +7,6 @@ import { LuAlignStartVertical } from 'react-icons/lu';
 import { useFGContext } from '../../context/FGContext';
 import {
   analyzeCsv,
-  calculateActualRamp,
   composeTargetChartData,
   zipArrayOfObjects,
 } from '../../Utils/csvUtils/csvUtils';
@@ -16,7 +15,7 @@ import './DataPage.css';
 import Select from '../../Molecules/Select/Select';
 import DataContainer from '../../Organisms/DataContainer/DataContainer';
 
-const DataPage = () => {
+function DataPage() {
   // Hook(s)
   const {
     csvParsedArray,
@@ -25,6 +24,7 @@ const DataPage = () => {
     graphOptions,
     setGraphOptions,
     setCombinedChartData,
+    setTargetDuration,
   } = useFGContext();
   const [optionsTC, setOptionsTC] = useState([]);
   const [optionsOut, setOptionsOut] = useState([]);
@@ -48,6 +48,8 @@ const DataPage = () => {
       // analyze data from csv array
       const analyzedData = analyzeCsv(csvParsedArray);
       setAnalysisData(analyzedData);
+
+      console.log('analdata', analyzedData);
 
       // better than using object(keys)? Mebe
       if (analyzedData && analyzedData.preFireInfo) {
@@ -101,7 +103,7 @@ const DataPage = () => {
         });
       }
     } else {
-      // SHOW ERROR MODAL
+      // TODO SHOW ERROR MODAL
     }
   }, []);
 
@@ -109,13 +111,13 @@ const DataPage = () => {
     // Set combined chart data (on mount and segment align change)
     if (analysisData) {
       const actualData = analysisData.segments
-        .map((segment) => {
-          return segment.segmentTicks.concat(segment.hold.holdTicks);
-        })
+        .map((segment) => segment.segmentTicks.concat(segment.hold.holdTicks))
         .flat(1);
 
       const { targetSegmentLookup, targetDataArrayWithApprox } =
         composeTargetChartData(analysisData);
+
+      console.log('targetDataArrayWithApprox', targetSegmentLookup);
 
       // shift for the lines based on difference in time between target and actual at start of segment
       const arrayOffset =
@@ -126,40 +128,18 @@ const DataPage = () => {
         targetDataArrayWithApprox,
         actualData,
         graphOptions.align === '1' ? 0 : arrayOffset,
-        graphOptions.tcs
+        graphOptions.tcs,
       );
 
       console.log('arrayOffset', arrayOffset);
       setSegmentOffset(arrayOffset);
 
       setCombinedChartData(combinedData);
+      setTargetDuration(targetDataArrayWithApprox.length - 1);
 
       console.log('combined', combinedData);
     }
   }, [analysisData, graphOptions.align, graphOptions.tcs]);
-
-  useEffect(() => {
-    // parse averages
-    console.log('analdata', analysisData);
-    if (analysisData && analysisData.segments) {
-      const segmentRampActual = [];
-      analysisData.segments.forEach((segment) => {
-        segmentRampActual.push(
-          calculateActualRamp(
-            segment.actualHalfMinutes,
-            segment.startActualTemp2,
-            segment.endActualTemp2,
-            segment.number
-          )
-        );
-        segmentRampActual.push({
-          [`target${segment.number}`]: segment.targetRamp,
-        });
-      });
-
-      console.log('actualramp', segmentRampActual);
-    }
-  }, [analysisData]);
 
   // Function(s)
   const handleTCChange = (_event, newValue) => {
@@ -182,7 +162,7 @@ const DataPage = () => {
   };
 
   if (!analysisData) {
-    // SHOW ERROR MODAL
+    // TODO SHOW ERROR MODAL
     return <CircularProgress />;
   }
 
@@ -204,7 +184,7 @@ const DataPage = () => {
               icon={<FaTemperatureHigh />}
               accessibilityLabel="tc"
               label="Thermocouple(s)"
-              tooltipText="Select TC(s) used for graph and table data. NOTE: only active TCs with avg. temps above 0 are shown."
+              tooltipText="Select TC(s) used for the graph. NOTE: only active TCs with avg. temps above 0 are shown."
               helperText={
                 optionsTC.length < 2
                   ? 'Disabled: only one TC'
@@ -220,7 +200,6 @@ const DataPage = () => {
               defaultValue="Average"
               onChange={handleAvgChange}
               icon={<FaChartLine />}
-              // accessibilityLabel="avg"
               label="TC Format"
               tooltipText="Select to either average TC temps in graph or to show separate lines for each TC. NOTE: does not affect table data."
               helperText={
@@ -272,11 +251,11 @@ const DataPage = () => {
       <div className="graphContainer">
         <LineGraph segmentOffset={segmentOffset} />
       </div>
-      <div>
+      <Box padding={3} pb={5}>
         <DataContainer />
-      </div>
+      </Box>
     </div>
   );
-};
+}
 
 export default DataPage;

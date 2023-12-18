@@ -29,7 +29,7 @@ import { IoRemoveCircleOutline, IoAddCircle } from 'react-icons/io5';
 import { useFGContext } from '../../context/FGContext';
 import Tooltip from '../../Molecules/Tooltip/Tooltip';
 
-const UploadForm = () => {
+function UploadForm() {
   // Hook(s)
   const defaultButtonTitle = 'Choose a file...';
   const {
@@ -63,9 +63,9 @@ const UploadForm = () => {
   // Function(s)
   const chooseFile = (event, index) => {
     setCsvRawArray([...csvRawArray, event.target.files[0]]);
-    const newUploadButtonArray = uploadButtonArray.filter((item, ind) => {
-      return item.title !== defaultButtonTitle && ind !== index;
-    });
+    const newUploadButtonArray = uploadButtonArray.filter(
+      (item, ind) => item.title !== defaultButtonTitle && ind !== index,
+    );
 
     newUploadButtonArray.push({ title: event.target.files[0].name });
     setUploadButtonArray(newUploadButtonArray);
@@ -85,14 +85,14 @@ const UploadForm = () => {
             // Create a new promise (or a promise factory), that would add a parameter with a boolean to toss on line 104 if condition, so only runs on subsequent
             new Promise((resolve, reject) => {
               let isFirstStep = true;
-              return Papa.parse(csv, {
+              Papa.parse(csv, {
                 header: true,
                 skipEmptyLines: true,
                 step: (row) => {
                   if (isFirstStep && blockContinueRowArray[row.data.time]) {
                     // Do the thing where we shift the array
                     parsedFileArray.splice(
-                      blockContinueRowArray[row.data.time]
+                      blockContinueRowArray[row.data.time],
                     );
                     isFirstStep = false;
                   }
@@ -109,8 +109,8 @@ const UploadForm = () => {
                 },
                 error: reject,
               });
-            })
-        )
+            }),
+        ),
       )
         .then(() => {
           setCsvParsedArray(parsedFileArray);
@@ -129,9 +129,9 @@ const UploadForm = () => {
   };
 
   const removeFile = (index) => {
-    const newUploadButtonArray = uploadButtonArray.filter((_item, ind) => {
-      return ind !== index;
-    });
+    const newUploadButtonArray = uploadButtonArray.filter(
+      (_item, ind) => ind !== index,
+    );
 
     if (newUploadButtonArray.length) {
       setUploadButtonArray(newUploadButtonArray);
@@ -139,9 +139,7 @@ const UploadForm = () => {
       setUploadButtonArray([{ title: defaultButtonTitle }]);
     }
 
-    const newCsvRawArray = csvRawArray.filter((_item, ind) => {
-      return ind !== index;
-    });
+    const newCsvRawArray = csvRawArray.filter((_item, ind) => ind !== index);
     setCsvRawArray(newCsvRawArray);
   };
 
@@ -224,9 +222,9 @@ const UploadForm = () => {
         </h2>
         <div className="uploadButtonsContainer">
           {uploadButtonArray &&
-            uploadButtonArray.map((arrayItem, index) => {
-              return renderUploadButton(arrayItem.title, index);
-            })}
+            uploadButtonArray.map((arrayItem, index) =>
+              renderUploadButton(arrayItem.title, index),
+            )}
           <Button
             component="label"
             role={undefined}
@@ -247,6 +245,6 @@ const UploadForm = () => {
       </div>
     </div>
   );
-};
+}
 
 export default UploadForm;

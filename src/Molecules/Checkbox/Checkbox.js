@@ -3,7 +3,7 @@ import { Checkbox as JoyCheckbox } from '@mui/joy';
 import Tooltip from '../Tooltip/Tooltip';
 import './Checkbox.css';
 
-const Checkbox = ({ isChecked, label, onChange, tooltipText }) => {
+function Checkbox({ isChecked, label, onChange, tooltipText }) {
   return (
     <div className="checkboxContainer">
       <JoyCheckbox
@@ -29,6 +29,6 @@ const Checkbox = ({ isChecked, label, onChange, tooltipText }) => {
       <Tooltip tooltipText={tooltipText} />
     </div>
   );
-};
+}
 
 export default Checkbox;

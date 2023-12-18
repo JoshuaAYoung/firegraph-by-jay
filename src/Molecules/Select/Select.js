@@ -10,7 +10,7 @@ import {
 import './Select.css';
 import Tooltip from '../Tooltip/Tooltip';
 
-const Select = ({
+function Select({
   options,
   multiSelect,
   defaultValue,
@@ -23,7 +23,7 @@ const Select = ({
   placeholder,
   renderValuePrefix,
   disabled,
-}) => {
+}) {
   return (
     <div className="selectContainer">
       <FormControl sx={{ width: '100%' }}>
@@ -60,8 +60,8 @@ const Select = ({
             },
           }}
           startDecorator={icon}
-          renderValue={(selected) => {
-            return Array.isArray(selected) ? (
+          renderValue={(selected) =>
+            Array.isArray(selected) ? (
               <div>
                 {selected.map((item, index) => {
                   const suffix = selected.length === index + 1 ? '' : ', ';
@@ -70,8 +70,8 @@ const Select = ({
               </div>
             ) : (
               <div>{`${renderValuePrefix}${selected.value}`}</div>
-            );
-          }}
+            )
+          }
         >
           {options.map((option, index) => (
             <Option
@@ -97,6 +97,6 @@ const Select = ({
       </FormControl>
     </div>
   );
-};
+}
 
 export default Select;

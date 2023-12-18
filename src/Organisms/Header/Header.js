@@ -1,23 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import './Header.css';
-import { format } from 'date-fns';
 import { Button } from '@mui/joy';
 import { MdPictureAsPdf } from 'react-icons/md';
 import { useFGContext } from '../../context/FGContext';
-import { parseISODateString } from '../../Utils/dateUtils/dateUtils';
+import { parseDateString } from '../../Utils/dateUtils/dateUtils';
 
-const Header = ({ downloadPDF }) => {
+function Header({ downloadPDF }) {
   const { analysisData, resetState } = useFGContext();
-  const dateISO = analysisData
-    ? parseISODateString(analysisData.startTime)
-    : '';
-  const programDate = dateISO
-    ? format(parseISODateString(analysisData.startTime), 'MM/dd/yyyy')
-    : '';
+  const { date } = useMemo(
+    () => parseDateString(analysisData?.startTime),
+    [analysisData],
+  );
 
-  const programTitle =
-    analysisData && analysisData.programName ? analysisData.programName : '';
+  const programTitle = analysisData?.programName || '';
 
   const resetStateValues = () => {
     resetState();
@@ -38,7 +34,7 @@ const Header = ({ downloadPDF }) => {
       </NavLink>
       <div className="titleContainer">
         <h2 className="programTitle">{programTitle}</h2>
-        <p className="programSubtitle">{programDate}</p>
+        <p className="programSubtitle">{date}</p>
       </div>
       {analysisData && (
         <div>
@@ -60,6 +56,6 @@ const Header = ({ downloadPDF }) => {
       )}
     </div>
   );
-};
+}
 
 export default Header;

@@ -1,92 +1,98 @@
-import React from 'react';
-import IconButton from '@mui/joy/IconButton';
-import Table from '@mui/joy/Table';
-import Sheet from '@mui/joy/Sheet';
-import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
+import React, { useMemo } from 'react';
+import { Sheet, Table } from '@mui/joy';
+import TableRow from './TableRow';
+import {
+  calculateActualRamp,
+  minutesFromRamp,
+} from '../../Utils/csvUtils/csvUtils';
+import {
+  minutesToHourString,
+  parseDateString,
+} from '../../Utils/dateUtils/dateUtils';
+import Tooltip from '../Tooltip/Tooltip';
+import { useFGContext } from '../../context/FGContext';
 
-const createData = (name, calories, fat, carbs, protein, price) => {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
-  };
-};
+function DataTable() {
+  const { analysisData, graphOptions } = useFGContext();
+  const tempTooltipText =
+    'This value is averaged from the selected TCs at the top of the page.';
 
-const Row = (props) => {
-  const { row } = props;
-  const [open, setOpen] = React.useState(props.initialOpen || false);
+  const rowData = useMemo(
+    () =>
+      analysisData?.segments?.map((segment, index) => {
+        let totalStartTCTemp = 0;
+        let totalEndTCTemp = 0;
+        graphOptions.tcs.forEach((tc) => {
+          totalStartTCTemp += Number(segment[`startActualTemp${tc}`]);
+          totalEndTCTemp += Number(segment[`endActualTemp${tc}`]);
+        });
 
-  return (
-    <>
-      <tr onClick={() => setOpen(!open)}>
-        <td>
-          <IconButton
-            aria-label="expand row"
-            variant="plain"
-            color="neutral"
-            size="sm"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <IoIosArrowUp /> : <IoIosArrowDown />}
-          </IconButton>
-        </td>
-        <td>{row.name}</td>
-        <td>{row.calories}</td>
-        <td>{row.fat}</td>
-        <td>{row.carbs}</td>
-        <td>{row.protein}</td>
-      </tr>
-      <tr>
-        <td style={{ height: 0, padding: 0 }} colSpan={6}>
-          {open && (
-            <Sheet
-              variant="soft"
-              color="neutral"
-              sx={{
-                p: 1,
-                pl: 6,
-                boxShadow: 'inset 0 3px 6px 0 rgba(0 0 0 / 0.08)',
-              }}
-            >
-              test
-            </Sheet>
-          )}
-        </td>
-      </tr>
-    </>
+        const averageStartTemp = Math.round(
+          totalStartTCTemp / graphOptions.tcs.length,
+        );
+        const averageEndTemp = Math.round(
+          totalEndTCTemp / graphOptions.tcs.length,
+        );
+
+        const actualRamp = calculateActualRamp(
+          segment.actualHalfMinutes,
+          averageStartTemp,
+          averageEndTemp,
+        );
+
+        const startTempTarget =
+          analysisData.segments[index - 1]?.targetTemp || 0;
+        const targetDurationMinutes = minutesFromRamp(
+          startTempTarget,
+          segment.targetTemp,
+          segment.targetRamp,
+        );
+
+        const { isoDateWithTime: startTime } = parseDateString(
+          segment.startTime,
+        );
+        const { isoDateWithTime: endTime } = parseDateString(
+          analysisData.segments[index + 1]?.startTime || analysisData.endTime,
+        );
+
+        return {
+          number: segment.number,
+          actualRamp: Math.abs(actualRamp),
+          targetRamp: segment.targetRamp,
+          rampDiff: Math.round(segment.targetRamp - actualRamp),
+          targetTemp: segment.targetTemp,
+          targetHoldTime: segment.hold?.targetHoldTime,
+          actualDuration: minutesToHourString(segment.actualHalfMinutes / 2),
+          targetDuration: minutesToHourString(targetDurationMinutes),
+          durationDiff: Math.round(
+            segment.actualHalfMinutes / 2 - targetDurationMinutes,
+          ),
+          startTime,
+          endTime,
+          actualStartTemp: averageStartTemp,
+          targetStartTemp: startTempTarget,
+          actualEndTemp: averageEndTemp,
+          actualHoldTime: minutesToHourString(
+            segment.hold.actualHalfMinutes / 2,
+          ),
+          temp1Average: segment.averageTemp1,
+          temp2Average: segment.averageTemp2,
+          temp3Average: segment.averageTemp3,
+          out1Average: segment.averageOut1,
+          out2Average: segment.averageOut2,
+          out3Average: segment.averageOut3,
+          skipped: segment.skipped,
+        };
+      }),
+    [analysisData, graphOptions.tcs],
   );
-};
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-];
-
-const DataTable = () => {
   return (
     <Sheet
       variant="soft"
       color="neutral"
       sx={{
-        pt: 1,
+        overflow: 'auto',
         borderRadius: 'sm',
         transition: '0.3s',
         '& tr:last-child': {
@@ -103,33 +109,76 @@ const DataTable = () => {
         hoverRow
         borderAxis="bothBetween"
         aria-label="collapsible table"
-        // sx={{
-        //   '& > thead > tr > th:nth-child(n + 3), & > tbody > tr > td:nth-child(n + 3)':
-        //     { textAlign: 'right' },
-        //   '& > tbody > tr:nth-child(odd) > td, & > tbody > tr:nth-child(odd) > th[scope="row"]':
-        //     {
-        //       borderBottom: 0,
-        //     },
-        // }}
+        sx={{
+          minWidth: 900,
+          '& > tbody > tr:nth-child(odd) > td, & > tbody > tr:nth-child(odd) > th[scope="row"]':
+            {
+              borderBottom: 0,
+            },
+        }}
       >
         <thead>
           <tr>
-            <th style={{ width: 40 }} aria-label="empty" />
-            <th style={{ width: '40%' }}>Dessert (100g serving)</th>
-            <th>Calories</th>
-            <th>Fat&nbsp;(g)</th>
-            <th>Carbs&nbsp;(g)</th>
-            <th>Protein&nbsp;(g)</th>
+            <th
+              colSpan={10}
+              style={{ paddingLeft: 24, fontWeight: '700', fontSize: 20 }}
+            >
+              Detailed Segment Data
+            </th>
+          </tr>
+          <tr>
+            <th
+              rowSpan={2}
+              style={{
+                maxWidth: '25px',
+                borderLeftStyle: 'none',
+                textAlign: 'center',
+              }}
+              aria-label="empty"
+            >
+              <Tooltip tooltipText="Click a row to see segment details." />
+            </th>
+            <th rowSpan={2}>Segment</th>
+            <th colSpan={3} style={{ textAlign: 'center' }}>
+              Ramp Rate (°/hr)
+            </th>
+            <th rowSpan={2}>
+              Temp.{' '}
+              <Tooltip
+                tooltipText="Target top temp for the segment."
+                iconDims={24}
+              />
+            </th>
+            <th rowSpan={2}>Hold Time</th>
+            <th colSpan={3} style={{ textAlign: 'center' }}>
+              Duration{' '}
+              <Tooltip
+                tooltipText="Does not include hold duration."
+                iconDims={24}
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>
+              Actual <Tooltip tooltipText={tempTooltipText} iconDims={24} />
+            </th>
+            <th>Target</th>
+            <th>
+              Diff. <Tooltip tooltipText={tempTooltipText} iconDims={24} />
+            </th>
+            <th>Actual</th>
+            <th>Target</th>
+            <th>Diff.</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, index) => (
-            <Row key={row.name} row={row} initialOpen={index === 0} />
+          {rowData.map((row, index) => (
+            <TableRow key={`${row.number} - ${index}`} row={row} />
           ))}
         </tbody>
       </Table>
     </Sheet>
   );
-};
+}
 
 export default DataTable;

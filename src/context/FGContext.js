@@ -9,6 +9,7 @@ export const FGContextProvider = ({ children }) => {
   const [csvParsedArray, setCsvParsedArray] = useState([]);
   const [analysisData, setAnalysisData] = useState(null);
   const [combinedChartData, setCombinedChartData] = useState([]);
+  const [targetDuration, setTargetDuration] = useState(0);
   const [graphOptions, setGraphOptions] = useState({
     tcs: [],
     avg: true,
@@ -22,6 +23,7 @@ export const FGContextProvider = ({ children }) => {
     setAnalysisData(null);
     setGraphOptions({ tcs: [], avg: true, align: '1', out: [] });
     setCombinedChartData([]);
+    setTargetDuration([]);
   };
 
   const value = {
@@ -32,6 +34,8 @@ export const FGContextProvider = ({ children }) => {
     analysisData,
     setAnalysisData,
     combinedChartData,
+    targetDuration,
+    setTargetDuration,
     setCombinedChartData,
     graphOptions,
     setGraphOptions,
