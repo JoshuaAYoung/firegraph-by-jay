@@ -13,6 +13,7 @@ export const parseDateString = (dateString) => {
       date: format(datePlusTime, 'MMM do, yyyy'),
       dateWithTime: format(datePlusTime, 'MMM do, yyyy h:mm aaaa'),
       isoDateWithTime: format(datePlusTime, 'MM/dd/yyyy h:mm aaaa'),
+      fileDate: format(datePlusTime, 'yyyy_MM_dd'),
     };
   }
   return '';

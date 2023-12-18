@@ -117,8 +117,6 @@ function DataPage() {
       const { targetSegmentLookup, targetDataArrayWithApprox } =
         composeTargetChartData(analysisData);
 
-      console.log('targetDataArrayWithApprox', targetSegmentLookup);
-
       // shift for the lines based on difference in time between target and actual at start of segment
       const arrayOffset =
         Number(segmentLookupTable[graphOptions.align]) -
@@ -131,7 +129,7 @@ function DataPage() {
         graphOptions.tcs,
       );
 
-      console.log('arrayOffset', arrayOffset);
+      console.log('arrayOffsetDP', arrayOffset);
       setSegmentOffset(arrayOffset);
 
       setCombinedChartData(combinedData);
@@ -184,7 +182,7 @@ function DataPage() {
               icon={<FaTemperatureHigh />}
               accessibilityLabel="tc"
               label="Thermocouple(s)"
-              tooltipText="Select TC(s) used for the graph. NOTE: only active TCs with avg. temps above 0 are shown."
+              tooltipText="Select TC(s) used for the graph and the data table. NOTE: only active TCs with avg. temps above 0 are shown."
               helperText={
                 optionsTC.length < 2
                   ? 'Disabled: only one TC'

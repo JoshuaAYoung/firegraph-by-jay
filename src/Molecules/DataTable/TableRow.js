@@ -30,10 +30,8 @@ function ExpandedListItem({ label, value, tooltipText }) {
   );
 }
 
-function TableRow({ row }) {
+function TableRow({ row, tempTooltipText }) {
   const [open, setOpen] = React.useState(false);
-  const tempTooltipText =
-    'This value is averaged from the selected TCs at the top of the page.';
 
   return (
     <>

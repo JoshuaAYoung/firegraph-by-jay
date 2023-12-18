@@ -23,7 +23,7 @@ export const analysisValuesTemplate = {
 export const segmentValuesTemplate = {
   number: '',
   startTime: '',
-  actualHalfMinutes: '',
+  actualHalfMinutes: 0,
   startActualTemp1: '',
   startActualTemp2: '',
   startActualTemp3: '',
@@ -161,7 +161,7 @@ export const analyzeCsv = (dataArray) => {
           if (!row.name && row.time) {
             const { isoDateWithTime } = parseDateString(row.time);
             analysisObj.events.push({
-              name: 'Segment Skip',
+              name: 'Skip',
               value: `Segment ${analysisObj.segments[0].number} at ${isoDateWithTime}`,
             });
             analysisObj.segments[0].skipped = true;
@@ -426,7 +426,8 @@ export const composeTargetChartData = (analysisData) => {
 };
 
 const zip = (a, b) => {
-  const largerArray = a.length > b.length ? a : b;
+  // >= here fixes issue with edge case where both arrays are the same length
+  const largerArray = a.length >= b.length ? a : b;
   const smallerArray = a.length < b.length ? a : b;
 
   return largerArray.map((x, i) => {

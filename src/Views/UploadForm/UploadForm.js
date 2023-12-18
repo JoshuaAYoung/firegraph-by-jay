@@ -1,21 +1,10 @@
 // TODO
-// High Priority
-// General data - look at Grid component
-// Table - Look at collapsible row example from Joi - Striped - TABLE DATA CHANGES WHEN YOU CHANGE DROPDOWN FOR TC
-// Note about how hold data sometimes isn't in there (like at the end of my first glaze fire csv) - info button on last segment hold cell instead of data?
-// deviation from target ramp in last 200 degrees!!! (can we make this work for C and F?)
-// QUESTION: should we be thinking about including setpoint data here???
-
-// SMALL FRY
-// Adjust colors of outputs? Too close?
-// plus button on uploadform just opens the file upload and then creates a button after you select one. Just skip default values
 // - media query for header flexbox to go column, with lots of vertical margin
-// expander thing to view the whole CSV at bottom of FiringGraph page (what lib?)
-// icon button with tooltips all over the place (table headers, and other values that aren't self explanatory)
 // Textarea component for inserting personal notes about the firing
-// Empty state component instead of loading spinner with link to home page
 // how about an alert component that one of their TCs was a certain deviation from the average?
-// Other things to implement? https://community.ceramicartsdaily.org/topic/39241-building-a-genesis-log-file-grapher-website-for-me-and-community-need-feedback/
+
+// BUGS:
+
 // google analytics with javascript error logger: https://www.analyticsmania.com/post/tracking-errors-with-google-tag-manager/#:~:text=Go%20to%20Triggers%20%3E%20New%20%3E%20Trigger,Error%20URL%2C%20and%20Error%20Line.
 import React, { useEffect, useState } from 'react';
 import { Button, styled } from '@mui/joy';
@@ -37,12 +26,12 @@ function UploadForm() {
     setCsvRawArray,
     csvParsedArray,
     setCsvParsedArray,
-    setAnalysisData,
     resetState,
   } = useFGContext();
   const [uploadButtonArray, setUploadButtonArray] = useState([
     { title: defaultButtonTitle },
   ]);
+  // TODO error modal
   const [hasErrors, setHasErrors] = useState(false);
 
   const navigate = useNavigate();
@@ -82,7 +71,6 @@ function UploadForm() {
       Promise.all(
         csvRawArray.map(
           (csv) =>
-            // Create a new promise (or a promise factory), that would add a parameter with a boolean to toss on line 104 if condition, so only runs on subsequent
             new Promise((resolve, reject) => {
               let isFirstStep = true;
               Papa.parse(csv, {
@@ -90,7 +78,8 @@ function UploadForm() {
                 skipEmptyLines: true,
                 step: (row) => {
                   if (isFirstStep && blockContinueRowArray[row.data.time]) {
-                    // Do the thing where we shift the array
+                    // For two files, we need to hack off the end of the first file,
+                    // as there's a lot of duplicated rows in the second file
                     parsedFileArray.splice(
                       blockContinueRowArray[row.data.time],
                     );

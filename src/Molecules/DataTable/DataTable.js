@@ -15,7 +15,7 @@ import { useFGContext } from '../../context/FGContext';
 function DataTable() {
   const { analysisData, graphOptions } = useFGContext();
   const tempTooltipText =
-    'This value is averaged from the selected TCs at the top of the page.';
+    'This value is affected by the user selected TCs at the top of the page.';
 
   const rowData = useMemo(
     () =>
@@ -173,7 +173,11 @@ function DataTable() {
         </thead>
         <tbody>
           {rowData.map((row, index) => (
-            <TableRow key={`${row.number} - ${index}`} row={row} />
+            <TableRow
+              key={`${row.number} - ${index}`}
+              row={row}
+              tempTooltipText={tempTooltipText}
+            />
           ))}
         </tbody>
       </Table>

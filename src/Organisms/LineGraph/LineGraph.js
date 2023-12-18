@@ -61,7 +61,6 @@ function LineGraph({ segmentOffset }) {
     if (props && props.dataKey === 'targetTemp') {
       return [`${value}°`, `${name} Temp`];
     }
-    console.log(props);
     if (props && props.dataKey.toLowerCase().includes('temp')) {
       return [`${value}°`, `${name} Temp${graphOptions.avg ? ' (avg.)' : ''}`];
     }
@@ -145,24 +144,21 @@ function LineGraph({ segmentOffset }) {
           isAnimationActive={false}
         />
         {!graphOptions.avg
-          ? graphOptions.tcs.map((tcNumber, index) => {
-              console.log('tcNumber???', tcNumber);
-              return (
-                <Line
-                  key={`tc${tcNumber} - ${index}`}
-                  name={`Actual TC${tcNumber}`}
-                  type="linear"
-                  dataKey={`temp${tcNumber}`}
-                  // stroke="#0b84a5"
-                  stroke={tcColorArray[tcNumber - 1]}
-                  activeDot={{ r: 8 }}
-                  dot={false}
-                  strokeWidth={3}
-                  yAxisId="left"
-                  animationDuration={3000}
-                />
-              );
-            })
+          ? graphOptions.tcs.map((tcNumber, index) => (
+              <Line
+                key={`tc${tcNumber} - ${index}`}
+                name={`Actual TC${tcNumber}`}
+                type="linear"
+                dataKey={`temp${tcNumber}`}
+                // stroke="#0b84a5"
+                stroke={tcColorArray[tcNumber - 1]}
+                activeDot={{ r: 8 }}
+                dot={false}
+                strokeWidth={3}
+                yAxisId="left"
+                animationDuration={3000}
+              />
+            ))
           : graphOptions.tcs.length && (
               <Line
                 name="Actual"
