@@ -2,19 +2,18 @@
 // - media query for header flexbox to go column, with lots of vertical margin
 // Textarea component for inserting personal notes about the firing
 // how about an alert component that one of their TCs was a certain deviation from the average?
-
+// empty, error and alertPDF modals
 // BUGS:
 
 // google analytics with javascript error logger: https://www.analyticsmania.com/post/tracking-errors-with-google-tag-manager/#:~:text=Go%20to%20Triggers%20%3E%20New%20%3E%20Trigger,Error%20URL%2C%20and%20Error%20Line.
 import React, { useEffect, useState } from 'react';
 import { Button, styled } from '@mui/joy';
-import './UploadForm.css';
+import './UploadPage.css';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
 import { MdOutlineCloudUpload } from 'react-icons/md';
 import { FaRegFile } from 'react-icons/fa';
 import { IoRemoveCircleOutline, IoAddCircle } from 'react-icons/io5';
-
 import { useFGContext } from '../../context/FGContext';
 import Tooltip from '../../Molecules/Tooltip/Tooltip';
 

@@ -1,0 +1,45 @@
+.csvTable {
+  border-collapse: collapse;
+  margin: 65px 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  min-width: 850px;
+}
+
+.csvTable thead {
+  background-color: #6d5b5b;
+  color: #ffffff;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+}
+
+.csvTable th.csv-html-header-title {
+  text-align: center;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  height: 1rem;
+  position: sticky;
+  top: 0;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+}
+
+.csvTable th,
+.csvTable td {
+    padding: 8px 8px;
+    text-align: left;
+}
+
+.csvTable tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.csvTable tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}

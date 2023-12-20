@@ -6,7 +6,8 @@ import { CssVarsProvider } from '@mui/joy/styles';
 import { format } from 'date-fns';
 import NotFoundPage from './Views/NotFoundPage/NotFoundPage';
 import ErrorBoundary from './ErrorBoundary';
-import UploadForm from './Views/UploadForm/UploadForm';
+import UploadPAge from './Views/UploadPage/UploadPage';
+import CsvPage from './Views/CsvPage/CsvPage';
 import DataPage from './Views/DataPage/DataPage';
 import Header from './Organisms/Header/Header';
 import Footer from './Organisms/Footer/Footer';
@@ -44,8 +45,9 @@ function App() {
         <main className="appMain">
           <ErrorBoundary>
             <Routes>
-              <Route path="/" element={<UploadForm />} />
+              <Route path="/" element={<UploadPAge />} />
               <Route path="results" element={<DataPage />} />
+              <Route path="csv" element={<CsvPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </ErrorBoundary>

@@ -5,6 +5,7 @@ import { Button } from '@mui/joy';
 import { MdPictureAsPdf } from 'react-icons/md';
 import { useFGContext } from '../../context/FGContext';
 import { parseDateString } from '../../Utils/dateUtils/dateUtils';
+import PageMenu from '../../Molecules/PageMenu/PageMenu';
 
 function Header({ downloadPDF }) {
   const { analysisData, resetState } = useFGContext();
@@ -38,20 +39,7 @@ function Header({ downloadPDF }) {
       </div>
       {analysisData && (
         <div>
-          <Button
-            onClick={() => downloadPDF({ page: { format: 'letter' } })}
-            loading={false}
-            variant="plain"
-            color="warning"
-            size="sm"
-            startDecorator={<MdPictureAsPdf size={20} />}
-            sx={{
-              backgroundColor: '#ffaa00',
-              color: '#272727',
-            }}
-          >
-            Download PDF
-          </Button>
+          <PageMenu downloadPDF={downloadPDF} />
         </div>
       )}
     </div>

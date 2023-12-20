@@ -98,7 +98,7 @@ function DataPage() {
         setGraphOptions({
           tcs: defaultTCArray,
           avg: true,
-          align: optionsSegmentsArray[0].value || '1',
+          align: optionsSegmentsArray[0]?.value || '1',
           out: [],
         });
       }
