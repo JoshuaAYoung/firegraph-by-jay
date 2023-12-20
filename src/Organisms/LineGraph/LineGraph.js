@@ -199,7 +199,7 @@ function LineGraph({ segmentOffset }) {
                 dot={false}
                 strokeWidth={3}
                 yAxisId="right"
-                animationDuration={3000}
+                isAnimationActive={false}
               />
             ))}
           </>
