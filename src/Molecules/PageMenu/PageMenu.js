@@ -1,7 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import IconButton from '@mui/joy/IconButton';
 import {
+  Box,
+  Button,
   Dropdown,
+  IconButton,
+  ListDivider,
   ListItemDecorator,
   Menu,
   MenuButton,
@@ -10,32 +13,38 @@ import {
 import { FaEllipsisVertical } from 'react-icons/fa6';
 import { MdPictureAsPdf } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { FaAngleRight } from 'react-icons/fa';
 
 function PageMenu({ downloadPDF, addFiringNotes }) {
-  const [resultsOpen, setResultsOpen] = useState(false);
-  const [csvOpen, setCsvOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleCsvOpenChange = useCallback((event, isOpen) => {
-    setCsvOpen(isOpen);
-  }, []);
+  const isResultsPage = location.pathname === '/results';
+  const isCsvPage = location.pathname === '/csv';
 
-  const handleResultsOpenChange = useCallback((event, isOpen) => {
-    setResultsOpen(isOpen);
+  const handleOpenChange = useCallback((_event, openBool) => {
+    setIsOpen(openBool);
   }, []);
 
   const navigateCsv = () => {
-    setCsvOpen(false);
-    setResultsOpen(false);
-    navigate('/csv');
+    if (!isCsvPage) {
+      setIsOpen(false);
+      navigate('/csv');
+    }
   };
 
   const navigateResults = () => {
-    setCsvOpen(false);
-    setResultsOpen(false);
-    navigate('/results');
+    if (!isResultsPage) {
+      setIsOpen(false);
+      navigate('/results');
+    }
+  };
+
+  const navigateHome = () => {
+    setIsOpen(false);
+    navigate('/');
   };
 
   const alertPdf = () => {
@@ -45,74 +54,109 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
     );
   };
 
-  if (location.pathname === '/results') {
-    return (
-      <Dropdown open={resultsOpen} onOpenChange={handleResultsOpenChange}>
-        <MenuButton
-          slots={{ root: IconButton }}
-          slotProps={{
-            root: {
-              sx: {
-                backgroundColor: '#ffaa00',
-                color: '#272727',
-              },
-            },
-          }}
-        >
-          <FaEllipsisVertical />
-        </MenuButton>
-        <Menu placement="bottom-end">
-          <MenuItem sx={{ columnGap: 0 }} onClick={downloadPDF}>
-            <ListItemDecorator>
-              <MdPictureAsPdf />
-            </ListItemDecorator>
-            Download PDF
-          </MenuItem>
-          <MenuItem disabled sx={{ columnGap: 0 }} onClick={addFiringNotes}>
-            <ListItemDecorator>
-              <MdPictureAsPdf />
-            </ListItemDecorator>
-            Add Firing Notes
-          </MenuItem>
-          <MenuItem sx={{ columnGap: 0 }} onClick={navigateCsv}>
-            <ListItemDecorator>
-              <MdPictureAsPdf />
-            </ListItemDecorator>
-            View Raw CSV
-          </MenuItem>
-        </Menu>
-      </Dropdown>
-    );
-  }
+  const MenutItemSX = {
+    fontWeight: '600 !important;',
+    fontSize: '16px',
+    padding: '12px 24px !important;',
+    color: '#6d5b5b',
+    backgroundColor: 'white',
+    '&:hover': {
+      backgroundColor: '#FFD480 !important;',
+    },
+    '&.Mui-selected': {
+      backgroundColor: '#ffaa00',
+      color: 'black',
+      '&:hover': {
+        backgroundColor: '#ffaa00 !important;',
+        cursor: 'default',
+      },
+    },
+  };
 
   return (
-    <Dropdown open={csvOpen} onOpenChange={handleCsvOpenChange}>
+    <Dropdown open={isOpen} onOpenChange={handleOpenChange}>
       <MenuButton
         slots={{ root: IconButton }}
         slotProps={{
           root: {
             sx: {
-              backgroundColor: '#ffaa00',
+              backgroundColor: isOpen ? '#f0f4f8' : '#ffaa00',
               color: '#272727',
+              '&:hover': { backgroundColor: '#FFD480' },
             },
           },
         }}
       >
         <FaEllipsisVertical />
       </MenuButton>
-      <Menu placement="bottom-end">
-        <MenuItem sx={{ columnGap: 0 }} onClick={alertPdf}>
-          <ListItemDecorator>
-            <MdPictureAsPdf />
-          </ListItemDecorator>
-          Download PDF
+      <Menu
+        placement="bottom-end"
+        sx={{
+          minWidth: '200px',
+          border: 'none',
+          paddingTop: 0,
+          paddingBottom: 0,
+          boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px;',
+        }}
+      >
+        <MenuItem sx={MenutItemSX} onClick={navigateHome}>
+          Home
         </MenuItem>
-        <MenuItem sx={{ columnGap: 0 }} onClick={navigateResults}>
-          <ListItemDecorator>
-            <MdPictureAsPdf />
-          </ListItemDecorator>
-          Back To Data
+        <MenuItem
+          sx={MenutItemSX}
+          onClick={isResultsPage ? undefined : navigateResults}
+          {...(isResultsPage && {
+            selected: true,
+          })}
+        >
+          Data Page
         </MenuItem>
+        <MenuItem
+          sx={MenutItemSX}
+          onClick={isCsvPage ? undefined : navigateCsv}
+          {...(isCsvPage && {
+            selected: true,
+          })}
+        >
+          CSV Reader
+        </MenuItem>
+        <ListDivider sx={{ marginTop: 0, marginBottom: 0 }} />
+        <Box display="flex" flexDirection="column" margin="16px 12px">
+          {isResultsPage && (
+            <Button
+              onClick={addFiringNotes}
+              loading={false}
+              variant="outlined"
+              color="warning"
+              size="sm"
+              startDecorator={<MdPictureAsPdf size={20} />}
+              sx={{
+                borderWidth: '2px',
+                fontWeight: 600,
+                marginBottom: '10px',
+                '&:hover': {
+                  backgroundColor: '#FFD480',
+                  borderColor: '#FFD480',
+                },
+              }}
+            >
+              Add Firing Note
+            </Button>
+          )}
+          <Button
+            onClick={isResultsPage ? downloadPDF : alertPdf}
+            loading={false}
+            variant="solid"
+            color="warning"
+            size="sm"
+            startDecorator={<MdPictureAsPdf size={20} />}
+            sx={{
+              fontWeight: 600,
+            }}
+          >
+            Download PDF
+          </Button>
+        </Box>
       </Menu>
     </Dropdown>
   );

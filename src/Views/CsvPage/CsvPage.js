@@ -32,8 +32,6 @@ function CsvPage() {
     refArray.current = refArray.current.slice(0, csvRawArray.length);
   }, [csvRawArray]);
 
-  console.log('csvStringArray', csvStringArray, csvRawArray);
-
   const scrollTo = (refCurrent, index) => {
     console.log('ref?', refCurrent, refArray, index);
     if (refCurrent) {

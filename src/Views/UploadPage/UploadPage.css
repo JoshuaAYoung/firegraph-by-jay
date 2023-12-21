@@ -7,9 +7,7 @@
 .uploadCard {
   padding: 30px 30px 20px;
   border-radius: 6px;
-  border: 2px solid;
-  box-shadow: rgba(0, 0, 0, 0.22) 0px 1px 2.22px;
-  border-color: #7b441a;
+  box-shadow: 5px 10px 10px hsl(0deg 0% 0% / 0.34);
   margin: 20px;
   display: flex;
   flex-direction: column;

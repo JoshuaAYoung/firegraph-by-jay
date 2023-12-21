@@ -63,25 +63,61 @@ function UploadForm() {
         csvRawArray.map(
           (csv) =>
             new Promise((resolve, reject) => {
-              let isFirstStep = true;
+              let isFirstRow = true;
+              let fileIndex = 0;
               Papa.parse(csv, {
                 header: true,
                 skipEmptyLines: true,
                 step: (row) => {
-                  if (isFirstStep && blockContinueRowArray[row.data.time]) {
+                  // So basically, these conditions target the first "block continue" of the 2nd file
+                  // and matches the time with a time from the 1st file's array of "block continue" objects
+                  if (
+                    isFirstRow &&
+                    blockContinueRowArray[row.data.time] &&
+                    row.data.event === 'block continue' &&
+                    fileIndex === 0
+                  ) {
                     // For two files, we need to hack off the end of the first file,
                     // as there's a lot of duplicated rows in the second file
+                    console.log(
+                      'parsedFileArraysplice',
+                      parsedFileArray,
+                      blockContinueRowArray,
+                      blockContinueRowArray[row.data.time],
+                    );
+
+                    // Deletes all elements from the current file array after the index recorded in blockContinueRowArray
+                    // which looks like "2023-7-3T16:08:59Z: 2691"
                     parsedFileArray.splice(
                       blockContinueRowArray[row.data.time],
                     );
-                    isFirstStep = false;
+                    isFirstRow = false;
                   }
 
+                  // The if statement above should only occur on the first row (fileIndex 0), if it happens elsewhere
+                  // it's likely an issue with reversed file order. Warn but don't redirect user.
+                  if (
+                    isFirstRow &&
+                    blockContinueRowArray[row.data.time] &&
+                    row.data.event === 'block continue' &&
+                    fileIndex !== 0
+                  ) {
+                    // TODO modal telling the user that they probably selected the files in the wrong order
+                    // Try again if graph looks weird!
+                    console.log('WRONNGNNNNGNG!!!!!!!!!!!!!!!');
+                  }
+
+                  // This keeps track of the index of the last "block continue" event
                   if (row.data.event === 'block continue') {
+                    console.log(
+                      'parsedFileArray.length',
+                      parsedFileArray.length,
+                    );
                     blockContinueRowArray[row.data.time] =
                       parsedFileArray.length;
                   }
 
+                  fileIndex += 1;
                   parsedFileArray.push(row.data);
                 },
                 complete: () => {
@@ -93,7 +129,11 @@ function UploadForm() {
         ),
       )
         .then(() => {
+          console.log("row.data.event === 'block continue'", parsedFileArray);
           setCsvParsedArray(parsedFileArray);
+        })
+        .then(() => {
+          navigate('/results');
         })
         .catch((error) => {
           console.log('Papaparse error:', error);
@@ -131,11 +171,11 @@ function UploadForm() {
     setHasErrors(false);
   }, []);
 
-  useEffect(() => {
-    if (csvParsedArray && csvParsedArray.length && csvRawArray.length) {
-      navigate('/results');
-    }
-  }, [csvParsedArray]);
+  // useEffect(() => {
+  //   if (csvParsedArray && csvParsedArray.length && csvRawArray.length) {
+  //     navigate('/results');
+  //   }
+  // }, [csvParsedArray]);
 
   // Render Functions(s)
   const renderUploadButton = (title, index) => {
