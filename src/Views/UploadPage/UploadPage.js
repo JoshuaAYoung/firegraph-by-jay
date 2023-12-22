@@ -64,8 +64,6 @@ function UploadForm() {
     setUploadButtonArray(newUploadButtonArray);
   };
 
-  console.log('errorMessage', errorMessage);
-
   const parseCsvArray = (event) => {
     event.preventDefault();
     const parsedFileArray = [];

@@ -1,6 +1,6 @@
 .csvTable {
   border-collapse: collapse;
-  margin: 40px 0;
+  margin: 0;
   font-size: 0.9em;
   font-family: sans-serif;
   width: 100%;
@@ -30,8 +30,8 @@
 
 .csvTable th,
 .csvTable td {
-    padding: 8px 8px;
-    text-align: left;
+  padding: 8px 8px;
+  text-align: left;
 }
 
 .csvTable tbody tr {
@@ -40,4 +40,11 @@
 
 .csvTable tbody tr:nth-of-type(even) {
   background-color: #f3f3f3;
+}
+
+@media only screen and (max-width: 920px) {
+  .scrollBox {
+    overflow: auto;
+    height: 100vh;
+  }
 }

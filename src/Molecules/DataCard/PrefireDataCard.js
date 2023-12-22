@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ListItem, Typography } from '@mui/joy';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import { useFGContext } from '../../context/FGContext';
@@ -11,15 +11,36 @@ import {
 
 function PrefireDataCard() {
   // Hook(s)
-  const [prefireOpen, setPrefireOpen] = React.useState(false);
-  const [diagnosticsOpen, setDiagnosticsOpen] = React.useState(false);
-  const { analysisData } = useFGContext();
+  const [prefireOpen, setPrefireOpen] = useState(false);
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+  const { analysisData, dataExpandedState, setDataExpandedState } =
+    useFGContext();
 
   const { dateWithTime } = parseDateString(analysisData?.startTime);
 
   const startTime =
     dateWithTime ||
     minutesToHourString(analysisData?.segments[0]?.segmentTicks[0].time);
+
+  const expandDiagnostics = (bool) => {
+    setDiagnosticsOpen(bool);
+    setDataExpandedState('mixed');
+  };
+
+  const expandPrefire = (bool) => {
+    setPrefireOpen(bool);
+    setDataExpandedState('mixed');
+  };
+
+  useEffect(() => {
+    if (dataExpandedState === 'expanded') {
+      setPrefireOpen(true);
+      setDiagnosticsOpen(true);
+    } else if (dataExpandedState === 'collapsed') {
+      setPrefireOpen(false);
+      setDiagnosticsOpen(false);
+    }
+  }, [dataExpandedState]);
 
   return (
     <>
@@ -65,7 +86,7 @@ function PrefireDataCard() {
       </ListItem>
       <ExpandableListItem
         isOpen={prefireOpen}
-        setIsOpen={setPrefireOpen}
+        setIsOpen={expandPrefire}
         listItems={(analysisData && analysisData.preFireInfo) || []}
         title="Pre-Fire Info"
         titleSpan={(analysisData && analysisData.preFireInfo.length) || ''}
@@ -73,7 +94,7 @@ function PrefireDataCard() {
       />
       <ExpandableListItem
         isOpen={diagnosticsOpen}
-        setIsOpen={setDiagnosticsOpen}
+        setIsOpen={expandDiagnostics}
         listItems={(analysisData && analysisData.diagnostics) || []}
         title="Diagnostics"
         titleSpan={(analysisData && analysisData.diagnostics.length) || ''}

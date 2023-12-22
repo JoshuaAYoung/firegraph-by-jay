@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, IconButton, List, ListItem, Sheet } from '@mui/joy';
 import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
 import LabelValue from '../../Atoms/LabelValue/LabelValue';
 import Tooltip from '../../Atoms/Tooltip/Tooltip';
+import { useFGContext } from '../../context/FGContext';
 
 function ExpandedListItem({ label, value, tooltipText }) {
   return (
@@ -31,18 +32,32 @@ function ExpandedListItem({ label, value, tooltipText }) {
 }
 
 function TableRow({ row, tempTooltipText }) {
-  const [open, setOpen] = React.useState(false);
+  const { dataExpandedState, setDataExpandedState } = useFGContext();
+  const [open, setOpen] = useState(false);
+
+  const expandSegment = (bool) => {
+    setOpen(bool);
+    setDataExpandedState('mixed');
+  };
+
+  useEffect(() => {
+    if (dataExpandedState === 'expanded') {
+      setOpen(true);
+    } else if (dataExpandedState === 'collapsed') {
+      setOpen(false);
+    }
+  }, [dataExpandedState]);
 
   return (
     <>
-      <tr onClick={() => setOpen(!open)}>
+      <tr onClick={() => expandSegment(!open)}>
         <td>
           <IconButton
             aria-label="expand row"
             variant="plain"
             color="neutral"
             size="sm"
-            onClick={() => setOpen(!open)}
+            onClick={() => expandSegment(!open)}
           >
             {open ? <IoIosArrowUp /> : <IoIosArrowDown />}
           </IconButton>

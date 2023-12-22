@@ -13,8 +13,10 @@ import { FaEllipsisVertical } from 'react-icons/fa6';
 import { MdPictureAsPdf, MdStickyNote2 } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from '../../Atoms/Modal/Modal';
+import { useFGContext } from '../../context/FGContext';
 
-function PageMenu({ downloadPDF, addFiringNotes }) {
+function PageMenu({ downloadPDF }) {
+  const { addAndScrollNotes, showFiringNote } = useFGContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -51,6 +53,10 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
     setIsMenuOpen(false);
     setIsModalOpen(false);
     navigate('/');
+  };
+
+  const addFiringNotes = () => {
+    addAndScrollNotes();
   };
 
   const alertPdf = () => {
@@ -125,27 +131,6 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
         </MenuItem>
         <ListDivider sx={{ marginTop: 0, marginBottom: 0 }} />
         <Box display="flex" flexDirection="column" margin="16px 12px">
-          {isResultsPage && (
-            <Button
-              onClick={addFiringNotes}
-              loading={false}
-              variant="outlined"
-              color="warning"
-              size="sm"
-              startDecorator={<MdStickyNote2 size={20} />}
-              sx={{
-                borderWidth: '2px',
-                fontWeight: 600,
-                marginBottom: '10px',
-                '&:hover': {
-                  backgroundColor: '#FFD480',
-                  borderColor: '#FFD480',
-                },
-              }}
-            >
-              Add Firing Notes
-            </Button>
-          )}
           <Button
             onClick={isResultsPage ? downloadPDF : alertPdf}
             loading={false}

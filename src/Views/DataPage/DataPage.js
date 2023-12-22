@@ -111,8 +111,6 @@ function DataPage() {
               }
             });
 
-            console.log('analyzedData', analyzedData);
-
             // Options to pass to select for align segment
             const optionsSegmentsArray = [];
             // Lookup table to use to find minute to shift for align segment
@@ -212,8 +210,6 @@ function DataPage() {
   if (isLoading) {
     return <LoadingIndicator />;
   }
-
-  console.log('graphOptions', graphOptions);
 
   return (
     <div>

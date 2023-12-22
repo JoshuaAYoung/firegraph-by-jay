@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ListItem, Typography } from '@mui/joy';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import { useFGContext } from '../../context/FGContext';
@@ -11,10 +11,15 @@ import {
 
 function PostfireDataCard() {
   // Hook(s)
-  const [postfireOpen, setPostfireOpen] = React.useState(false);
-  const [eventsOpen, setEventsOpen] = React.useState(false);
+  const [postfireOpen, setPostfireOpen] = useState(false);
+  const [eventsOpen, setEventsOpen] = useState(false);
 
-  const { analysisData, targetDuration } = useFGContext();
+  const {
+    analysisData,
+    targetDuration,
+    dataExpandedState,
+    setDataExpandedState,
+  } = useFGContext();
 
   const { dateWithTime } = parseDateString(analysisData?.endTime);
 
@@ -26,6 +31,26 @@ function PostfireDataCard() {
   );
 
   const targetHourDuration = minutesToHourString(targetDuration);
+
+  const expandEvents = (bool) => {
+    setEventsOpen(bool);
+    setDataExpandedState('mixed');
+  };
+
+  const expandPostfire = (bool) => {
+    setPostfireOpen(bool);
+    setDataExpandedState('mixed');
+  };
+
+  useEffect(() => {
+    if (dataExpandedState === 'expanded') {
+      setPostfireOpen(true);
+      setEventsOpen(true);
+    } else if (dataExpandedState === 'collapsed') {
+      setPostfireOpen(false);
+      setEventsOpen(false);
+    }
+  }, [dataExpandedState]);
 
   return (
     <>
@@ -101,7 +126,7 @@ function PostfireDataCard() {
       </ListItem>
       <ExpandableListItem
         isOpen={postfireOpen}
-        setIsOpen={setPostfireOpen}
+        setIsOpen={expandPostfire}
         listItems={(analysisData && analysisData.postFireInfo) || []}
         title="Post-Fire Info"
         titleSpan={(analysisData && analysisData.postFireInfo.length) || ''}
@@ -110,7 +135,7 @@ function PostfireDataCard() {
       {!!analysisData.events.length && (
         <ExpandableListItem
           isOpen={eventsOpen}
-          setIsOpen={setEventsOpen}
+          setIsOpen={expandEvents}
           listItems={(analysisData && analysisData.events) || []}
           title="Firing Events"
           titleSpan={(analysisData && analysisData.events.length) || ''}

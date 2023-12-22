@@ -11,7 +11,6 @@ export function FGContextProvider({ children }) {
   const [analysisData, setAnalysisData] = useState(null);
   const [combinedChartData, setCombinedChartData] = useState([]);
   const [targetDuration, setTargetDuration] = useState(0);
-  const [globalErrorMessage, setGlobalErrorMessage] = useState('');
 
   const [optionsTC, setOptionsTC] = useState([]);
   const [optionsOut, setOptionsOut] = useState([]);
@@ -24,6 +23,9 @@ export function FGContextProvider({ children }) {
     align: '1',
     out: [],
   });
+  const [globalErrorMessage, setGlobalErrorMessage] = useState('');
+  const [firingNoteValue, setFiringNoteValue] = useState('');
+  const [dataExpandedState, setDataExpandedState] = useState(null);
 
   const resetState = () => {
     setCsvRawArray([]);
@@ -39,8 +41,13 @@ export function FGContextProvider({ children }) {
     setDefaultTC([]);
     setGraphOptions({ tcs: [], avg: true, align: '1', out: [] });
     setGlobalErrorMessage('');
+    setFiringNoteValue('');
+    setDataExpandedState(null);
   };
 
+  // ugly but it works
+  // linters complain if this isn't in a useMemo, and this was the only workaround
+  // I could see other than to disable the rule
   const value = useMemo(
     () => ({
       csvRawArray,
@@ -69,6 +76,10 @@ export function FGContextProvider({ children }) {
       setGraphOptions,
       globalErrorMessage,
       setGlobalErrorMessage,
+      firingNoteValue,
+      setFiringNoteValue,
+      dataExpandedState,
+      setDataExpandedState,
       resetState,
     }),
     [
@@ -76,14 +87,32 @@ export function FGContextProvider({ children }) {
       setCsvRawArray,
       csvParsedArray,
       setCsvParsedArray,
+      csvStringArray,
+      setCsvStringArray,
       analysisData,
       setAnalysisData,
       combinedChartData,
+      setCombinedChartData,
       targetDuration,
       setTargetDuration,
-      setCombinedChartData,
+      optionsTC,
+      setOptionsTC,
+      optionsOut,
+      setOptionsOut,
+      optionsSegments,
+      setOptionsSegments,
+      segmentLookupTable,
+      setSegmentLookupTable,
+      defaultTC,
+      setDefaultTC,
       graphOptions,
       setGraphOptions,
+      globalErrorMessage,
+      setGlobalErrorMessage,
+      firingNoteValue,
+      setFiringNoteValue,
+      dataExpandedState,
+      setDataExpandedState,
       resetState,
     ],
   );

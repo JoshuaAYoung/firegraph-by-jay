@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CsvToHtmlTable } from 'react-csv-to-table-18';
 import { Box, Button } from '@mui/joy';
 import { FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
@@ -12,10 +12,7 @@ function CsvPage() {
   const { csvRawArray, csvStringArray, setCsvStringArray } = useFGContext();
   const [loading, setLoading] = useState(csvStringArray.length === 0 || false);
   const [csvError, setCsvError] = useState(false);
-  const refArray = useRef([]);
   const navigate = useNavigate();
-
-  console.log('csvStringArray', csvStringArray);
 
   const readString = (csv) =>
     new Promise((resolve) => {
@@ -46,16 +43,7 @@ function CsvPage() {
     }
   }, [csvStringArray]);
 
-  useEffect(() => {
-    refArray.current = refArray.current.slice(0, csvRawArray.length);
-  }, [csvRawArray]);
-
-  const scrollTo = (refCurrent, index) => {
-    console.log('ref?', refCurrent, refArray, index);
-    if (refCurrent) {
-      refCurrent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  const getHref = (index) => `#file-${index}`;
 
   const renderComponentRight = (index) => (
     <Box display="flex" width="100%" justifyContent="flex-end">
@@ -64,7 +52,8 @@ function CsvPage() {
         variant="plain"
         color="warning"
         size="sm"
-        onClick={() => scrollTo(refArray[index + 1], index)}
+        component="a"
+        href={getHref(index + 1)}
         sx={{
           color: 'white',
           '&:hover': {
@@ -87,12 +76,8 @@ function CsvPage() {
         variant="plain"
         color="warning"
         size="sm"
-        onClick={() =>
-          scrollTo(
-            refArray[index - 1] ? refArray[index - 1] : refArray[0],
-            index,
-          )
-        }
+        component="a"
+        href={getHref(index > 1 ? index : 0)}
         sx={{
           color: 'white',
           '&:hover': {
@@ -102,24 +87,18 @@ function CsvPage() {
         }}
         startDecorator={<FaChevronCircleUp size={20} />}
       >
-        {csvStringArray.length > 1 ? 'Scroll Previous' : 'Scroll Top'}
+        {index === 0 ? 'Scroll Top' : 'Scroll Previous'}
       </Button>
     </Box>
   );
 
   return (
-    <Box margin={2} height="100%" flexGrow={1}>
+    <Box margin="24px 24px 32px" height="100%" flexGrow={1}>
       {loading ? (
         <LoadingIndicator />
       ) : (
         csvRawArray.map((_, index) => (
-          <Box
-            position="relative"
-            key={`csv-${index}`}
-            ref={(el) => {
-              refArray[index] = el;
-            }}
-          >
+          <Box key={`csv-${index}`} className="scrollBox" marginBottom={4}>
             <CsvToHtmlTable
               key={`string-${index}`}
               data={csvStringArray[index]}
@@ -135,6 +114,7 @@ function CsvPage() {
               renderLeftComponent={() => renderComponentLeft(index)}
               rightComponentSpan={csvStringArray.length > 1 ? 4 : 0}
               leftComponentSpan={1}
+              bodyHash={`file-${index}`}
             />
           </Box>
         ))
