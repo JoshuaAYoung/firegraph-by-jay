@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, IconButton, List, ListItem, Sheet } from '@mui/joy';
 import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
-import LabelValue from '../LabelValue/LabelValue';
-import Tooltip from '../Tooltip/Tooltip';
+import LabelValue from '../../Atoms/LabelValue/LabelValue';
+import Tooltip from '../../Atoms/Tooltip/Tooltip';
 
 function ExpandedListItem({ label, value, tooltipText }) {
   return (

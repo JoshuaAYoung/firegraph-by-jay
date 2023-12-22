@@ -2,8 +2,8 @@ import React from 'react';
 import { ListItem, Typography } from '@mui/joy';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import { useFGContext } from '../../context/FGContext';
-import ExpandableListItem from '../ExpandableListItem/ExpandableListItem';
-import LabelValue from '../LabelValue/LabelValue';
+import ExpandableListItem from '../../Atoms/ExpandableListItem/ExpandableListItem';
+import LabelValue from '../../Atoms/LabelValue/LabelValue';
 import {
   parseDateString,
   minutesToHourString,
@@ -17,6 +17,9 @@ function PostfireDataCard() {
   const { analysisData, targetDuration } = useFGContext();
 
   const { dateWithTime } = parseDateString(analysisData?.endTime);
+
+  const endTime =
+    dateWithTime || minutesToHourString(analysisData.actualMinuteTicks);
 
   const actualHourDuration = minutesToHourString(
     analysisData?.actualMinuteTicks,
@@ -55,7 +58,7 @@ function PostfireDataCard() {
         <ListItem>
           <LabelValue
             label="Firing End Time"
-            value={dateWithTime || 'N/A'}
+            value={endTime || 'N/A'}
             tooltipText={
               !dateWithTime
                 ? 'The date and time on your controller are set using the internet. If your controller was not connected at the end of the firing, this date and time is invalid.'

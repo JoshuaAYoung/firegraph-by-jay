@@ -11,6 +11,13 @@ export function FGContextProvider({ children }) {
   const [analysisData, setAnalysisData] = useState(null);
   const [combinedChartData, setCombinedChartData] = useState([]);
   const [targetDuration, setTargetDuration] = useState(0);
+  const [globalErrorMessage, setGlobalErrorMessage] = useState('');
+
+  const [optionsTC, setOptionsTC] = useState([]);
+  const [optionsOut, setOptionsOut] = useState([]);
+  const [optionsSegments, setOptionsSegments] = useState([]);
+  const [segmentLookupTable, setSegmentLookupTable] = useState([]);
+  const [defaultTC, setDefaultTC] = useState([]);
   const [graphOptions, setGraphOptions] = useState({
     tcs: [],
     avg: true,
@@ -21,11 +28,17 @@ export function FGContextProvider({ children }) {
   const resetState = () => {
     setCsvRawArray([]);
     setCsvParsedArray([]);
+    setCsvStringArray([]);
     setAnalysisData(null);
-    setGraphOptions({ tcs: [], avg: true, align: '1', out: [] });
     setCombinedChartData([]);
     setTargetDuration([]);
-    setCsvStringArray([]);
+    setOptionsTC([]);
+    setOptionsOut([]);
+    setOptionsSegments([]);
+    setSegmentLookupTable([]);
+    setDefaultTC([]);
+    setGraphOptions({ tcs: [], avg: true, align: '1', out: [] });
+    setGlobalErrorMessage('');
   };
 
   const value = useMemo(
@@ -34,17 +47,29 @@ export function FGContextProvider({ children }) {
       setCsvRawArray,
       csvParsedArray,
       setCsvParsedArray,
+      csvStringArray,
+      setCsvStringArray,
       analysisData,
       setAnalysisData,
       combinedChartData,
+      setCombinedChartData,
       targetDuration,
       setTargetDuration,
-      setCombinedChartData,
+      optionsTC,
+      setOptionsTC,
+      optionsOut,
+      setOptionsOut,
+      optionsSegments,
+      setOptionsSegments,
+      segmentLookupTable,
+      setSegmentLookupTable,
+      defaultTC,
+      setDefaultTC,
       graphOptions,
       setGraphOptions,
+      globalErrorMessage,
+      setGlobalErrorMessage,
       resetState,
-      csvStringArray,
-      setCsvStringArray,
     }),
     [
       csvRawArray,

@@ -6,6 +6,7 @@
   width: 100%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   min-width: 850px;
+  border: 2px solid #6d5b5b;
 }
 
 .csvTable thead {
@@ -13,9 +14,11 @@
   color: #ffffff;
   text-align: left;
   position: sticky;
-  top: 0;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
+  top: -1px;
+}
+
+.csvTable tr.csv-html-title-row {
+  height: 1rem;
 }
 
 .csvTable th.csv-html-header-title {
@@ -23,11 +26,6 @@
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
   font-size: 1.2rem;
-  height: 1rem;
-  position: sticky;
-  top: 0;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
 }
 
 .csvTable th,

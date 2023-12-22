@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  IconButton,
   Option,
   Select as JoySelect,
   FormControl,

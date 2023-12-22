@@ -1,20 +1,22 @@
 import React, { useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import './Header.css';
-import { Button } from '@mui/joy';
-import { MdPictureAsPdf } from 'react-icons/md';
 import { useFGContext } from '../../context/FGContext';
 import { parseDateString } from '../../Utils/dateUtils/dateUtils';
 import PageMenu from '../../Molecules/PageMenu/PageMenu';
 
 function Header({ downloadPDF }) {
-  const { analysisData, resetState } = useFGContext();
+  const { analysisData, resetState, csvRawArray } = useFGContext();
   const { date } = useMemo(
     () => parseDateString(analysisData?.startTime),
     [analysisData],
   );
+  const location = useLocation();
 
-  const programTitle = analysisData?.programName || '';
+  let programTitle = '';
+  if (location.pathname !== '/') {
+    programTitle = analysisData?.programName || csvRawArray[0]?.name || '';
+  }
 
   const resetStateValues = () => {
     resetState();

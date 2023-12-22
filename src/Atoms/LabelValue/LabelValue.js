@@ -2,13 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/joy';
 import Tooltip from '../Tooltip/Tooltip';
 
-const LabelValue = ({
-  label,
-  value,
-  tooltipText,
-  tooltipIcon,
-  ...boxProps
-}) => {
+function LabelValue({ label, value, tooltipText, tooltipIcon, ...boxProps }) {
   return (
     <Box
       display="flex"
@@ -37,6 +31,6 @@ const LabelValue = ({
       </Box>
     </Box>
   );
-};
+}
 
 export default LabelValue;

@@ -10,7 +10,6 @@ import {
   ReferenceLine,
   ResponsiveContainer,
 } from 'recharts';
-import { useNavigate } from 'react-router-dom';
 import { useFGContext } from '../../context/FGContext';
 import './LineGraph.css';
 import { minutesToHourString } from '../../Utils/dateUtils/dateUtils';
@@ -32,19 +31,10 @@ function CustomReferenceLabel(props) {
 function LineGraph({ segmentOffset }) {
   const { analysisData, graphOptions, combinedChartData } = useFGContext();
 
-  const navigate = useNavigate();
-
   const outputOptionsLength = graphOptions && graphOptions.out.length;
 
   const tcColorArray = ['#003f5c', '#444e86', '#955196'];
   const outColorArray = ['#dd5182', '#ff6e54', '#ffa600'];
-
-  // useEffect(() => {
-  //   console.log('analysisData', analysisData);
-  //   if (!analysisData) {
-  //     navigate('/');
-  //   }
-  // }, []);
 
   const renderCustomAxisTick = (props) => (
     <text
@@ -70,8 +60,6 @@ function LineGraph({ segmentOffset }) {
     return `Time : ${minutesToHourString(value)} hours`;
   };
 
-  console.log('graph', graphOptions, outputOptionsLength, segmentOffset);
-
   return (
     <ResponsiveContainer width="100%" height="100%" marginTop={20}>
       <LineChart
@@ -91,8 +79,8 @@ function LineGraph({ segmentOffset }) {
             key={segment.number + index}
             x={
               segmentOffset < 0
-                ? segment.segmentTicks[0].time + Math.abs(segmentOffset)
-                : segment.segmentTicks[0].time
+                ? segment.segmentTicks[0].index + Math.abs(segmentOffset)
+                : segment.segmentTicks[0].index
             }
             stroke="red"
             label={<CustomReferenceLabel value={segment.number} />}

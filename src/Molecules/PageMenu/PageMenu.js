@@ -5,18 +5,18 @@ import {
   Dropdown,
   IconButton,
   ListDivider,
-  ListItemDecorator,
   Menu,
   MenuButton,
   MenuItem,
 } from '@mui/joy';
 import { FaEllipsisVertical } from 'react-icons/fa6';
-import { MdPictureAsPdf } from 'react-icons/md';
+import { MdPictureAsPdf, MdStickyNote2 } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaAngleRight } from 'react-icons/fa';
+import Modal from '../../Atoms/Modal/Modal';
 
 function PageMenu({ downloadPDF, addFiringNotes }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,34 +24,37 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
   const isResultsPage = location.pathname === '/results';
   const isCsvPage = location.pathname === '/csv';
 
+  const pdfAlertTitle =
+    "This button typically downloads a screenshot, but this file can be very large for long CSVs. Try printing from your browser and choose 'Save as PDF'.";
+
   const handleOpenChange = useCallback((_event, openBool) => {
-    setIsOpen(openBool);
+    setIsMenuOpen(openBool);
   }, []);
 
   const navigateCsv = () => {
     if (!isCsvPage) {
-      setIsOpen(false);
+      setIsMenuOpen(false);
+      setIsModalOpen(false);
       navigate('/csv');
     }
   };
 
   const navigateResults = () => {
     if (!isResultsPage) {
-      setIsOpen(false);
+      setIsMenuOpen(false);
+      setIsModalOpen(false);
       navigate('/results');
     }
   };
 
   const navigateHome = () => {
-    setIsOpen(false);
+    setIsMenuOpen(false);
+    setIsModalOpen(false);
     navigate('/');
   };
 
   const alertPdf = () => {
-    // TODO change this into a modal!
-    console.warn(
-      "Currently disabled for this page. As the PDF Download button saves a screenshot in pdf format, this file can get quite large for this CSV page. Printing from your browser and choosing 'print to pdf' as the printer is a better strategy.",
-    );
+    setIsModalOpen(true);
   };
 
   const MenutItemSX = {
@@ -74,13 +77,13 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
   };
 
   return (
-    <Dropdown open={isOpen} onOpenChange={handleOpenChange}>
+    <Dropdown open={isMenuOpen} onOpenChange={handleOpenChange}>
       <MenuButton
         slots={{ root: IconButton }}
         slotProps={{
           root: {
             sx: {
-              backgroundColor: isOpen ? '#f0f4f8' : '#ffaa00',
+              backgroundColor: isMenuOpen ? '#f0f4f8' : '#ffaa00',
               color: '#272727',
               '&:hover': { backgroundColor: '#FFD480' },
             },
@@ -118,7 +121,7 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
             selected: true,
           })}
         >
-          CSV Reader
+          CSV Viewer
         </MenuItem>
         <ListDivider sx={{ marginTop: 0, marginBottom: 0 }} />
         <Box display="flex" flexDirection="column" margin="16px 12px">
@@ -129,7 +132,7 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
               variant="outlined"
               color="warning"
               size="sm"
-              startDecorator={<MdPictureAsPdf size={20} />}
+              startDecorator={<MdStickyNote2 size={20} />}
               sx={{
                 borderWidth: '2px',
                 fontWeight: 600,
@@ -140,7 +143,7 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
                 },
               }}
             >
-              Add Firing Note
+              Add Firing Notes
             </Button>
           )}
           <Button
@@ -158,6 +161,12 @@ function PageMenu({ downloadPDF, addFiringNotes }) {
           </Button>
         </Box>
       </Menu>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Currently Disabled for CSVs"
+        message={pdfAlertTitle}
+      />
     </Dropdown>
   );
 }

@@ -2,9 +2,12 @@ import React from 'react';
 import { ListItem, Typography } from '@mui/joy';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import { useFGContext } from '../../context/FGContext';
-import ExpandableListItem from '../ExpandableListItem/ExpandableListItem';
-import LabelValue from '../LabelValue/LabelValue';
-import { parseDateString } from '../../Utils/dateUtils/dateUtils';
+import ExpandableListItem from '../../Atoms/ExpandableListItem/ExpandableListItem';
+import LabelValue from '../../Atoms/LabelValue/LabelValue';
+import {
+  minutesToHourString,
+  parseDateString,
+} from '../../Utils/dateUtils/dateUtils';
 
 function PrefireDataCard() {
   // Hook(s)
@@ -13,6 +16,10 @@ function PrefireDataCard() {
   const { analysisData } = useFGContext();
 
   const { dateWithTime } = parseDateString(analysisData?.startTime);
+
+  const startTime =
+    dateWithTime ||
+    minutesToHourString(analysisData?.segments[0]?.segmentTicks[0].time);
 
   return (
     <>
@@ -45,7 +52,7 @@ function PrefireDataCard() {
         <ListItem>
           <LabelValue
             label="Firing Start Time"
-            value={dateWithTime || 'N/A'}
+            value={startTime || 'N/A'}
             tooltipText={
               !dateWithTime
                 ? 'The date and time on your controller are set using the internet. If your controller was not connected at the start of the firing, this date and time is invalid.'

@@ -19,7 +19,6 @@
   "rules": {
     "prettier/prettier": "warn",
     "no-unused-vars": "warn",
-    "no-undef": "off",
     "no-use-before-define": "off",
     "react/destructuring-assignment": "off",
     "no-console": "off",

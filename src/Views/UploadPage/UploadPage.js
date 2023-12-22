@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, styled } from '@mui/joy';
+import { Button, IconButton, styled } from '@mui/joy';
 import './UploadPage.css';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
@@ -7,7 +7,8 @@ import { MdOutlineCloudUpload } from 'react-icons/md';
 import { FaRegFile } from 'react-icons/fa';
 import { IoRemoveCircleOutline, IoAddCircle } from 'react-icons/io5';
 import { useFGContext } from '../../context/FGContext';
-import Tooltip from '../../Molecules/Tooltip/Tooltip';
+import Tooltip from '../../Atoms/Tooltip/Tooltip';
+import Modal from '../../Atoms/Modal/Modal';
 
 function UploadForm() {
   // Hook(s)
@@ -15,15 +16,14 @@ function UploadForm() {
   const {
     csvRawArray,
     setCsvRawArray,
-    csvParsedArray,
     setCsvParsedArray,
     resetState,
+    setGlobalErrorMessage,
   } = useFGContext();
   const [uploadButtonArray, setUploadButtonArray] = useState([
     { title: defaultButtonTitle },
   ]);
-  // TODO error modal
-  const [hasErrors, setHasErrors] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
@@ -40,9 +40,22 @@ function UploadForm() {
     width: 1px;
   `;
 
+  // Computed Var(s)
+  const parsingErrorMessage =
+    'There was an issue parsing the CSV file you chose. Try uploading the file again, or check the file for obvious issues.';
+
   // Function(s)
   const chooseFile = (event, index) => {
-    setCsvRawArray([...csvRawArray, event.target.files[0]]);
+    // Replace file in array if the user clicks on the same input to change files
+    if (csvRawArray[index]) {
+      setCsvRawArray(
+        csvRawArray.map((file, ind) =>
+          ind === index ? event.target.files[0] : file,
+        ),
+      );
+    } else {
+      setCsvRawArray([...csvRawArray, event.target.files[0]]);
+    }
     const newUploadButtonArray = uploadButtonArray.filter(
       (item, ind) => item.title !== defaultButtonTitle && ind !== index,
     );
@@ -50,6 +63,8 @@ function UploadForm() {
     newUploadButtonArray.push({ title: event.target.files[0].name });
     setUploadButtonArray(newUploadButtonArray);
   };
+
+  console.log('errorMessage', errorMessage);
 
   const parseCsvArray = (event) => {
     event.preventDefault();
@@ -77,15 +92,6 @@ function UploadForm() {
                     row.data.event === 'block continue' &&
                     fileIndex === 0
                   ) {
-                    // For two files, we need to hack off the end of the first file,
-                    // as there's a lot of duplicated rows in the second file
-                    console.log(
-                      'parsedFileArraysplice',
-                      parsedFileArray,
-                      blockContinueRowArray,
-                      blockContinueRowArray[row.data.time],
-                    );
-
                     // Deletes all elements from the current file array after the index recorded in blockContinueRowArray
                     // which looks like "2023-7-3T16:08:59Z: 2691"
                     parsedFileArray.splice(
@@ -100,19 +106,16 @@ function UploadForm() {
                     isFirstRow &&
                     blockContinueRowArray[row.data.time] &&
                     row.data.event === 'block continue' &&
-                    fileIndex !== 0
+                    fileIndex !== 0 &&
+                    csvRawArray.length > 1
                   ) {
-                    // TODO modal telling the user that they probably selected the files in the wrong order
-                    // Try again if graph looks weird!
-                    console.log('WRONNGNNNNGNG!!!!!!!!!!!!!!!');
+                    setGlobalErrorMessage(
+                      'Files were likely uploaded in the wrong order. If the graph looks strange, try uploading the files again in order. From the menu, you can choose to view the raw CSV files to check the order.',
+                    );
                   }
 
                   // This keeps track of the index of the last "block continue" event
                   if (row.data.event === 'block continue') {
-                    console.log(
-                      'parsedFileArray.length',
-                      parsedFileArray.length,
-                    );
                     blockContinueRowArray[row.data.time] =
                       parsedFileArray.length;
                   }
@@ -129,23 +132,19 @@ function UploadForm() {
         ),
       )
         .then(() => {
-          console.log("row.data.event === 'block continue'", parsedFileArray);
           setCsvParsedArray(parsedFileArray);
         })
         .then(() => {
           navigate('/results');
         })
         .catch((error) => {
+          // TODO log this with GA
           console.log('Papaparse error:', error);
-          setHasErrors(true);
+          setErrorMessage(parsingErrorMessage);
         });
     } else {
-      setHasErrors(true);
+      setErrorMessage(parsingErrorMessage);
     }
-  };
-
-  const addUploadButton = () => {
-    setUploadButtonArray([...uploadButtonArray, { title: defaultButtonTitle }]);
   };
 
   const removeFile = (index) => {
@@ -164,18 +163,10 @@ function UploadForm() {
   };
 
   // Effect(s)
-
   useEffect(() => {
     resetState();
     setUploadButtonArray([{ title: defaultButtonTitle }]);
-    setHasErrors(false);
   }, []);
-
-  // useEffect(() => {
-  //   if (csvParsedArray && csvParsedArray.length && csvRawArray.length) {
-  //     navigate('/results');
-  //   }
-  // }, [csvParsedArray]);
 
   // Render Functions(s)
   const renderUploadButton = (title, index) => {
@@ -224,11 +215,23 @@ function UploadForm() {
           />
         )}
         {fileUploaded && uploadButtonArray.length === index + 1 && (
-          <Tooltip
-            tooltipText="Add a file"
-            icon={<IoAddCircle size={24} />}
-            onClick={() => addUploadButton()}
-          />
+          <Tooltip tooltipText="Add a file">
+            <IconButton
+              size="sm"
+              component="label"
+              role={undefined}
+              tabIndex={-1}
+            >
+              <IoAddCircle size={24} />
+              <VisuallyHiddenInput
+                type="file"
+                accept=".csv"
+                onChange={(e) => {
+                  chooseFile(e, index + 1);
+                }}
+              />
+            </IconButton>
+          </Tooltip>
         )}
       </div>
     );
@@ -263,6 +266,12 @@ function UploadForm() {
           this is the case for your firing.
         </p>
       </div>
+      <Modal
+        open={!!errorMessage}
+        onClose={() => setErrorMessage('')}
+        title="Warning"
+        message={errorMessage}
+      />
     </div>
   );
 }

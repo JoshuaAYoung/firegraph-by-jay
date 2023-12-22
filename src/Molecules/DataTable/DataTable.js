@@ -9,7 +9,7 @@ import {
   minutesToHourString,
   parseDateString,
 } from '../../Utils/dateUtils/dateUtils';
-import Tooltip from '../Tooltip/Tooltip';
+import Tooltip from '../../Atoms/Tooltip/Tooltip';
 import { useFGContext } from '../../context/FGContext';
 
 function DataTable() {
@@ -48,12 +48,20 @@ function DataTable() {
           segment.targetRamp,
         );
 
-        const { isoDateWithTime: startTime } = parseDateString(
+        const { isoDateWithTime: startIso } = parseDateString(
           segment.startTime,
         );
-        const { isoDateWithTime: endTime } = parseDateString(
+        const startTime =
+          startIso || minutesToHourString(segment.segmentTicks[0]?.time);
+
+        const { isoDateWithTime: endIso } = parseDateString(
           analysisData.segments[index + 1]?.startTime || analysisData.endTime,
         );
+        const endTime =
+          endIso ||
+          minutesToHourString(
+            analysisData.segments[index + 1]?.segmentTicks[0]?.time,
+          );
 
         return {
           number: segment.number,
@@ -111,7 +119,7 @@ function DataTable() {
         aria-label="collapsible table"
         sx={{
           minWidth: 900,
-          '& > tbody > tr:nth-child(odd) > td, & > tbody > tr:nth-child(odd) > th[scope="row"]':
+          '& > tbody > tr:nth-of-type(odd) > td, & > tbody > tr:nth-of-type(odd) > th[scope="row"]':
             {
               borderBottom: 0,
             },

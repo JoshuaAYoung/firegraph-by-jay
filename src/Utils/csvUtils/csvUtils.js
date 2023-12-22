@@ -59,6 +59,7 @@ export const analyzeCsv = (dataArray) => {
     const analysisObj = cloneDeep(analysisValuesTemplate);
     analysisObj.startTime = dataArray[0].time || 'N/A';
     let segmentType = 'start';
+    let timeIndex = 0;
 
     dataArray.forEach((row, index) => {
       switch (row.event) {
@@ -196,6 +197,7 @@ export const analyzeCsv = (dataArray) => {
           if (row.t30s) {
             if (segmentType === 'ramp') {
               // Add the start temps and end temps for segment
+              // Remember that segments[0] is the latest, as we unshift and reverse
               analysisObj.segments[0] = {
                 ...analysisObj.segments[0],
                 actualHalfMinutes:
@@ -216,6 +218,7 @@ export const analyzeCsv = (dataArray) => {
               // Keep track of minutes, temp and output for segment (ticks, starting with 0)
               if (Number(row.t30s) % 2 === 0) {
                 analysisObj.segments[0].segmentTicks.push({
+                  index: timeIndex,
                   time: Number(row.t30s / 2),
                   temp1: row.temp1 ? Number(row.temp1) : null,
                   temp2: row.temp2 ? Number(row.temp2) : null,
@@ -224,6 +227,7 @@ export const analyzeCsv = (dataArray) => {
                   out2: row.out2 ? Number(row.out2) : null,
                   out3: row.out3 ? Number(row.out3) : null,
                 });
+                timeIndex += 1;
               }
             }
             if (segmentType === 'hold') {
@@ -248,6 +252,7 @@ export const analyzeCsv = (dataArray) => {
               // Keep track of minutes, temp and output for hold (ticks)
               if (Number(row.t30s) % 2 === 0) {
                 analysisObj.segments[0].hold.holdTicks.push({
+                  index: timeIndex,
                   time: Number(row.t30s / 2),
                   temp1: row.temp1 ? Number(row.temp1) : null,
                   temp2: row.temp2 ? Number(row.temp2) : null,
@@ -256,6 +261,7 @@ export const analyzeCsv = (dataArray) => {
                   out2: row.out2 ? Number(row.out2) : null,
                   out3: row.out3 ? Number(row.out3) : null,
                 });
+                timeIndex += 1;
               }
             }
           }
@@ -336,7 +342,8 @@ export const analyzeCsv = (dataArray) => {
     analysisObj.averageOut3 = Math.round(out3TotalSum / totalMinuteCount);
     analysisObj.actualMinuteTicks = totalMinuteCount - 1; // don't count minute at tick 0
 
-    analysisObj.segments.reverse();
+    // not only reverses sort from using unshift, but also helps when uploaded in wrong order
+    analysisObj.segments.sort((a, b) => a.number - b.number);
 
     return analysisObj;
   }
@@ -361,9 +368,13 @@ export const minutesFromRamp = (targetStartTemp, targetEndTemp, targetRamp) => {
 };
 
 export const composeTargetChartData = (analysisData) => {
-  const targetData = [{ time: 0, targetTemp: 0 }];
+  // When multiple files produced, if user uploads second file, the time of the first segmentTick will be above 0,
+  // and this screws up the graph a lot. Not necessary to support these files probably, but neat trick
+  const initialTimeValue =
+    Number(analysisData?.segments[0]?.segmentTicks[0]?.time) || 0;
+  const targetData = [{ time: initialTimeValue, targetTemp: 0 }];
   const targetSegmentLookup = {};
-  let minuteCounter = 0;
+  let minuteCounter = initialTimeValue;
 
   // graph points in the array for segment
   analysisData.segments.forEach((segment, index) => {

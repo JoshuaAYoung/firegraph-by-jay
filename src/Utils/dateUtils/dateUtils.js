@@ -20,7 +20,7 @@ export const parseDateString = (dateString) => {
 };
 
 export const minutesToHourString = (minutes) => {
-  if (minutes) {
+  if (minutes || minutes === 0) {
     const minutesNumber = Number(minutes);
     const hours = Math.floor(minutesNumber / 60);
     const minutesLeft = Math.round(minutesNumber % 60);
