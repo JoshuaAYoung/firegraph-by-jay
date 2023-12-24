@@ -1,13 +1,33 @@
 import React from 'react';
-import { Box, FormControl, FormLabel, Textarea, Typography } from '@mui/joy';
+import { useEditor, EditorContent } from '@tiptap/react';
+import Typography from '@tiptap/extension-typography';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
+import { Box, Typography as JoyTypography } from '@mui/joy';
 import { useFGContext } from '../../context/FGContext';
+import './FiringNotes.css';
 
 function FiringNotes() {
   const { firingNoteValue, setFiringNoteValue } = useFGContext();
 
-  const onChangeTextarea = (e) => {
-    setFiringNoteValue(e.target.value);
-  };
+  const editor = useEditor({
+    extensions: [
+      Typography,
+      StarterKit,
+      Placeholder.configure({
+        placeholder: 'Type something here...',
+      }),
+    ],
+    content: firingNoteValue,
+    onUpdate({ editor }) {
+      // isActive() for settig the color and stuff?
+      // editor.isEmpty
+      // isFocused
+      // can also try gettext or getjson
+      // use onFocus  and onBlur here?
+      setFiringNoteValue(editor.getJSON());
+    },
+  });
 
   return (
     <Box
@@ -16,36 +36,19 @@ function FiringNotes() {
       }}
       backgroundColor="#f2f2f2"
       borderRadius={8}
+      textAlign="left"
     >
-      <FormControl>
-        <FormLabel>
-          <Typography
-            level="h4"
-            sx={{
-              fontWeight: 'bold',
-              color: 'text.primary',
-            }}
-          >
-            My Notes
-          </Typography>
-        </FormLabel>
-        <Textarea
-          sx={{
-            borderRadius: 0,
-            border: 'none',
-            '&::before': {
-              display: 'none',
-            },
-            '&:focus-within': {
-              outline: '2px solid #ffaa00',
-              outlineOffset: '2px',
-            },
-          }}
-          onChange={onChangeTextarea}
-          value={firingNoteValue}
-          placeholder="Type something here…"
-        />
-      </FormControl>
+      <JoyTypography
+        level="h4"
+        sx={{
+          fontWeight: 'bold',
+          color: 'text.primary',
+          marginBottom: 1,
+        }}
+      >
+        My Notes
+      </JoyTypography>
+      <EditorContent editor={editor} />
     </Box>
   );
 }
