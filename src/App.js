@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import { usePDF } from 'react-to-pdf';
 import { CssVarsProvider } from '@mui/joy/styles';
@@ -18,6 +18,7 @@ import { useFGContext } from './context/FGContext';
 
 function App() {
   const { analysisData } = useFGContext();
+  const location = useLocation();
 
   let fileName = 'error_no_data';
   if (analysisData) {
@@ -28,14 +29,10 @@ function App() {
       '_',
     );
   }
+
   useEffect(() => {
-    ReactGA.initialize('G-B13PTQ8K33');
-    ReactGA.event({
-      category: 'PageViews',
-      action: 'loaded',
-      label: 'home page',
-    });
-  }, []);
+    ReactGA.pageview(location.pathname + location.search);
+  }, [location]);
 
   // This has to live here as the targetRef is what's used as the pdf extents
   const { toPDF, targetRef } = usePDF({
