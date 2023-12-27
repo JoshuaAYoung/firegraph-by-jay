@@ -20,11 +20,6 @@ function FiringNotes() {
     ],
     content: firingNoteValue,
     onUpdate({ editor }) {
-      // isActive() for settig the color and stuff?
-      // editor.isEmpty
-      // isFocused
-      // can also try gettext or getjson
-      // use onFocus  and onBlur here?
       setFiringNoteValue(editor.getJSON());
     },
   });
