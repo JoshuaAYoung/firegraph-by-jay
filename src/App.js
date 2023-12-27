@@ -31,7 +31,11 @@ function App() {
   }
 
   useEffect(() => {
-    ReactGA.pageview(location.pathname + location.search);
+    ReactGA.send({
+      hitType: 'pageview',
+      page: location.pathname,
+      title: 'Page View',
+    });
   }, [location]);
 
   // This has to live here as the targetRef is what's used as the pdf extents
