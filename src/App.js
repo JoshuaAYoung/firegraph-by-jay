@@ -29,7 +29,7 @@ function App() {
     );
   }
   useEffect(() => {
-    ReactGA.initialize('G-9L3W2L64E3');
+    ReactGA.initialize('G-B13PTQ8K33');
   }, []);
 
   // This has to live here as the targetRef is what's used as the pdf extents
