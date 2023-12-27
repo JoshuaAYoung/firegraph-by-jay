@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import { usePDF } from 'react-to-pdf';
 import { CssVarsProvider } from '@mui/joy/styles';
 import { format } from 'date-fns';
+import ReactGA from 'react-ga4';
 import NotFoundPage from './Views/NotFoundPage/NotFoundPage';
-import ErrorBoundary from './ErrorBoundary';
+import ErrorBoundary, { ErrorFallbackComponent } from './ErrorBoundary';
 import UploadPAge from './Views/UploadPage/UploadPage';
 import CsvPage from './Views/CsvPage/CsvPage';
 import DataPage from './Views/DataPage/DataPage';
@@ -27,6 +28,9 @@ function App() {
       '_',
     );
   }
+  useEffect(() => {
+    ReactGA.initialize('G-9L3W2L64E3');
+  }, []);
 
   // This has to live here as the targetRef is what's used as the pdf extents
   const { toPDF, targetRef } = usePDF({
@@ -38,12 +42,12 @@ function App() {
     <CssVarsProvider theme={theme}>
       <div className="app" ref={targetRef}>
         <header className="navBar" role="banner">
-          <ErrorBoundary>
+          <ErrorBoundary Fallback={ErrorFallbackComponent}>
             <Header downloadPDF={toPDF} />
           </ErrorBoundary>
         </header>
         <main className="appMain">
-          <ErrorBoundary>
+          <ErrorBoundary Fallback={ErrorFallbackComponent}>
             <Routes>
               <Route path="/" element={<UploadPAge />} />
               <Route path="results" element={<DataPage />} />
@@ -53,7 +57,7 @@ function App() {
           </ErrorBoundary>
         </main>
         <footer>
-          <ErrorBoundary>
+          <ErrorBoundary Fallback={ErrorFallbackComponent}>
             <Footer />
           </ErrorBoundary>
         </footer>
