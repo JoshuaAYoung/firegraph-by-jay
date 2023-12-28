@@ -6,6 +6,7 @@ import Papa from 'papaparse';
 import { MdOutlineCloudUpload } from 'react-icons/md';
 import { FaRegFile } from 'react-icons/fa';
 import { IoRemoveCircleOutline, IoAddCircle } from 'react-icons/io5';
+import ReactGA from 'react-ga4';
 import { useFGContext } from '../../context/FGContext';
 import Tooltip from '../../Atoms/Tooltip/Tooltip';
 import Modal from '../../Atoms/Modal/Modal';
@@ -136,8 +137,11 @@ function UploadForm() {
           navigate('/results');
         })
         .catch((error) => {
-          // TODO log this with GA
-          console.log('Papaparse error:', error);
+          ReactGA.event({
+            category: 'Errors',
+            action: error || 'PapaParse error',
+            label: 'UploadPage',
+          });
           setErrorMessage(parsingErrorMessage);
         });
     } else {

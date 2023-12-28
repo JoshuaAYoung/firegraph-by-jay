@@ -5,6 +5,7 @@ import { GiElectric } from 'react-icons/gi';
 import { FaChartLine } from 'react-icons/fa6';
 import { LuAlignStartVertical } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
+import ReactGA from 'react-ga4';
 import { useFGContext } from '../../context/FGContext';
 import LoadingIndicator from '../../Atoms/LoadingIndicator/LoadingIndicator';
 import {
@@ -154,9 +155,12 @@ function DataPage() {
           } else {
             throw new Error('Data Error, analyze CSV data.');
           }
-        } catch (e) {
-          // TODO log this with GA
-          console.log('DataPage Error:', e);
+        } catch (error) {
+          ReactGA.event({
+            category: 'Errors',
+            action: error || 'Error analyzing data',
+            label: 'DataPage',
+          });
           setHasError(true);
         }
       };

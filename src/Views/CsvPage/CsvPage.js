@@ -3,6 +3,7 @@ import { CsvToHtmlTable } from 'react-csv-to-table-18';
 import { Box, Button } from '@mui/joy';
 import { FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import ReactGA from 'react-ga4';
 import { useFGContext } from '../../context/FGContext';
 import Modal from '../../Atoms/Modal/Modal';
 import LoadingIndicator from '../../Atoms/LoadingIndicator/LoadingIndicator';
@@ -35,8 +36,11 @@ function CsvPage() {
           setLoading(false);
         })
         .catch((error) => {
-          // TODO track this spot with GA
-          console.log('error:', error);
+          ReactGA.event({
+            category: 'Errors',
+            action: error || 'Error parsing raw CSV with FileReader',
+            label: 'CsvPage',
+          });
           setLoading(false);
           setCsvError(true);
         });
