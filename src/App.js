@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
-import { usePDF } from 'react-to-pdf';
+import { usePDF, Margin } from 'react-to-pdf';
 import { CssVarsProvider } from '@mui/joy/styles';
 import { format } from 'date-fns';
 import ReactGA from 'react-ga4';
@@ -41,7 +41,7 @@ function App() {
   // This has to live here as the targetRef is what's used as the pdf extents
   const { toPDF, targetRef } = usePDF({
     filename: `${fileName}.pdf`,
-    page: { format: 'letter' },
+    page: { format: 'letter', margin: Margin.SMALL },
   });
 
   return (

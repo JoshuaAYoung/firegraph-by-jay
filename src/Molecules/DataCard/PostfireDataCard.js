@@ -86,7 +86,7 @@ function PostfireDataCard() {
             value={endTime || 'N/A'}
             tooltipText={
               !dateWithTime
-                ? 'The date and time on your controller are set using the internet. If your controller was not connected at the end of the firing, this date and time is invalid.'
+                ? "It would appear that your controller was not connected to the internet when this date and time was recorded. It's therefore shown here relative to the start (0h0m)."
                 : ''
             }
             tooltipIcon={<RiErrorWarningFill />}

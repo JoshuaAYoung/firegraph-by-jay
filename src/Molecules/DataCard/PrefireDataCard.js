@@ -76,7 +76,7 @@ function PrefireDataCard() {
             value={startTime || 'N/A'}
             tooltipText={
               !dateWithTime
-                ? 'The date and time on your controller are set using the internet. If your controller was not connected at the start of the firing, this date and time is invalid.'
+                ? 'It would appear that your controller was not connected to the internet when this date and time was recorded.'
                 : ''
             }
             tooltipIcon={<RiErrorWarningFill />}

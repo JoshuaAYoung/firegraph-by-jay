@@ -12,11 +12,14 @@ import {
 import { FaEllipsisVertical } from 'react-icons/fa6';
 import { MdPictureAsPdf } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ReactGA from 'react-ga4';
 import Modal from '../../Atoms/Modal/Modal';
+import { useFGContext } from '../../context/FGContext';
 
 function PageMenu({ downloadPDF }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { setDataExpandedState } = useFGContext();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,6 +58,16 @@ function PageMenu({ downloadPDF }) {
 
   const alertPdf = () => {
     setIsModalOpen(true);
+  };
+
+  const prepareAndDownloadPDF = () => {
+    ReactGA.event({
+      category: 'Features',
+      action: 'downloaded pdf',
+      label: 'PageMenu',
+    });
+    setDataExpandedState('expanded');
+    setTimeout(() => downloadPDF(), 300);
   };
 
   const MenutItemSX = {
@@ -126,7 +139,7 @@ function PageMenu({ downloadPDF }) {
         <ListDivider sx={{ marginTop: 0, marginBottom: 0 }} />
         <Box display="flex" flexDirection="column" margin="16px 12px">
           <Button
-            onClick={isResultsPage ? downloadPDF : alertPdf}
+            onClick={isResultsPage ? prepareAndDownloadPDF : alertPdf}
             loading={false}
             variant="solid"
             color="warning"
