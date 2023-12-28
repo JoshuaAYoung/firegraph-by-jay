@@ -34,7 +34,7 @@ function App() {
     ReactGA.send({
       hitType: 'pageview',
       page: location.pathname,
-      title: 'Page View',
+      title: location.pathname,
     });
   }, [location]);
 
