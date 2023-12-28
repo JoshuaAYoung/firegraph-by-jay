@@ -28,7 +28,7 @@ function PageMenu({ downloadPDF }) {
   const isCsvPage = location.pathname === '/csv';
 
   const pdfAlertTitle =
-    "This button typically downloads a screenshot, but this file can be very large for long CSVs. Try printing from your browser and choose 'Save as PDF'.";
+    "This button typically downloads a screenshot, but this file can be very large for long CSVs. Instyead, try printing from your browser and choose 'Save as PDF'.";
 
   const handleOpenChange = useCallback((_event, openBool) => {
     setIsMenuOpen(openBool);
