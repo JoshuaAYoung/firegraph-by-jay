@@ -104,7 +104,7 @@ function DataTable() {
         borderRadius: 'sm',
         transition: '0.3s',
         '& tr:last-child': {
-          '& td:first-child': {
+          '& td:first-of-type': {
             borderBottomLeftRadius: '8px',
           },
           '& td:last-child': {

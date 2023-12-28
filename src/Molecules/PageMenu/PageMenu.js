@@ -10,13 +10,11 @@ import {
   MenuItem,
 } from '@mui/joy';
 import { FaEllipsisVertical } from 'react-icons/fa6';
-import { MdPictureAsPdf, MdStickyNote2 } from 'react-icons/md';
+import { MdPictureAsPdf } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from '../../Atoms/Modal/Modal';
-import { useFGContext } from '../../context/FGContext';
 
 function PageMenu({ downloadPDF }) {
-  const { addAndScrollNotes, showFiringNote } = useFGContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -53,10 +51,6 @@ function PageMenu({ downloadPDF }) {
     setIsMenuOpen(false);
     setIsModalOpen(false);
     navigate('/');
-  };
-
-  const addFiringNotes = () => {
-    addAndScrollNotes();
   };
 
   const alertPdf = () => {

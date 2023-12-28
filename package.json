@@ -32,6 +32,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "lint": "eslint  --fix src/**/*.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

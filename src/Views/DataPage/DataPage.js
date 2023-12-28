@@ -87,10 +87,13 @@ function DataPage() {
                 'Looks like you uploaded the second file of a multi-file log. When the Genesis fires for more than 24 hours, it creates a second log file, and they must be uploaded in order. From the menu, you can choose to view the raw CSV file to check it for issues.',
               );
             }
+
             // set the thermocouple and output select options on first render
             const optionsTCArray = [];
             const defaultTCArray = [];
             const optionsOutArray = [];
+            const averageTempArray = [];
+            let averageTCSum = 0;
 
             averageTempKeyArray.forEach((key, index) => {
               if (key.includes('Temp') && analyzedData[key] !== 0) {
@@ -99,6 +102,18 @@ function DataPage() {
                   title: `TC${index + 1} (${analyzedData[key]}° avg.)`,
                 });
                 defaultTCArray.push(index + 1);
+                // for determining if a tc is way off to warn user
+                averageTempArray.push(analyzedData[key]);
+                averageTCSum += analyzedData[key];
+              }
+            });
+
+            averageTempArray.forEach((avgTemp) => {
+              const averageTCTemp = averageTCSum / averageTempArray.length;
+              if (Math.abs(averageTCTemp - avgTemp) > 50) {
+                setGlobalErrorMessage(
+                  'One or more thermocouples appear to be off by 50° or more from the average. This usually indicates an issue with one of your thermocouples. Consult the graph or table below, or use the CSV Viewer to diagnose.',
+                );
               }
             });
 
@@ -177,8 +192,6 @@ function DataPage() {
 
       setCombinedChartData(combinedData);
       setTargetDuration(targetDataArrayWithApprox.length - 1);
-
-      console.log('combined', combinedData);
     }
   }, [analysisData, graphOptions.align, graphOptions.tcs]);
 
@@ -231,7 +244,7 @@ function DataPage() {
               icon={<FaTemperatureHigh />}
               accessibilityLabel="tc"
               label="Thermocouple(s)"
-              tooltipText="Select TC(s) used for the graph and the data table. NOTE: only active TCs with avg. temps above 0 are shown."
+              tooltipText="Select TC(s) used for the graph and the data table. NOTE: only active TCs with avg. temps above 0° are shown."
               helperText={
                 optionsTC.length < 2
                   ? 'Disabled: only one TC'

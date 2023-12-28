@@ -5,7 +5,7 @@ import { PiInstagramLogoBold } from 'react-icons/pi';
 import { HiOutlineMail } from 'react-icons/hi';
 import { RiRedditLine } from 'react-icons/ri';
 
-const Footer = () => {
+function Footer() {
   // generate current year for copyright
   function generateCopyright() {
     const d = new Date();
@@ -58,6 +58,6 @@ const Footer = () => {
       </p>
     </div>
   );
-};
+}
 
 export default Footer;

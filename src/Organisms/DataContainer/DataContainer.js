@@ -86,14 +86,21 @@ function DataContainer() {
           </DataCardContainer>
         </Box>
       </Grid>
-      <Grid container xs={12} md={6} xl={8} spacing={2} sx={{ flexGrow: 1 }}>
+      <Grid
+        container
+        xs={12}
+        md={6}
+        xl={8}
+        spacing={2}
+        direction={{ xs: 'column-reverse', md: 'column', xl: 'row-reverse' }}
+      >
         <Grid xs={12} xl={6}>
+          <FiringNotes />
+        </Grid>
+        <Grid xs={12} xl={6} sx={{ flexGrow: 1 }}>
           <DataCardContainer>
             <PostfireDataCard />
           </DataCardContainer>
-        </Grid>
-        <Grid xs={12} xl={6}>
-          <FiringNotes />
         </Grid>
       </Grid>
       <Grid xs={12}>
