@@ -108,6 +108,8 @@ function LineGraph({ segmentOffset }) {
           label={{
             value: 'Temp',
             angle: -90,
+            position: 'left',
+            offset: -75,
           }}
           yAxisId="left"
         />
@@ -168,7 +170,8 @@ function LineGraph({ segmentOffset }) {
               label={{
                 value: 'Output %',
                 angle: -90,
-                offset: 2000,
+                position: 'right',
+                offset: -75,
               }}
               yAxisId="right"
               orientation="right"

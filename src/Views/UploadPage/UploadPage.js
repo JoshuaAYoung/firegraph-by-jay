@@ -217,7 +217,7 @@ function UploadForm() {
           />
         )}
         {fileUploaded && uploadButtonArray.length === index + 1 && (
-          <Tooltip tooltipText="Add a file">
+          <Tooltip tooltipText="Add a file - for firings over 24 hours">
             <IconButton
               size="sm"
               component="label"
@@ -263,9 +263,20 @@ function UploadForm() {
           </Button>
         </div>
         <p className="uploadNote">
-          Note: The Bartlett Genesis automatically creates multiple log files
-          for a firing over 24 hours. Only upload multiple files (in order) if
-          this is the case for your firing.
+          <a
+            href="https://www.youtube.com/watch?v=X9EEPjcCKFE"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Bartlett Genesis Log File Instructions"
+            className="instructionsLink"
+          >
+            Click here
+          </a>{' '}
+          for instructions on how to export a log file from your controller.
+        </p>
+        <p className="uploadNote">
+          Note: Only upload multiple files (in order) if your firing was over 24
+          hours long and the Genesis created multiple CSVs.
         </p>
       </div>
       <Modal

@@ -20,7 +20,6 @@
   margin: 0 0 20px 0;
   font-weight: 500;
   font-size: 1.1rem;
-  font-style: none;
   padding-right: 1rem;
   font-family: 'Roboto', sans-serif;
 }
@@ -28,7 +27,6 @@
 .uploadNote {
   margin: 20px 0 0;
   font-size: .8rem;
-  font-style: none;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -42,4 +40,8 @@
 .chooseFileButtons {
   margin-bottom: 10px;
   display: flex;
+}
+
+.instructionsLink {
+  font-weight: 700;
 }
