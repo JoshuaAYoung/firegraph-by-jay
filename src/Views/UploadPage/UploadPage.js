@@ -47,6 +47,12 @@ function UploadForm() {
 
   // Function(s)
   const chooseFile = (event, index) => {
+    if (event.target.files[0].type !== 'text/csv') {
+      setErrorMessage(
+        "It appears that the file you're attempting to upload is not a CSV file, which is what the Genesis outputs. Please try again and ensure that you've selected a file with a .CSV file type.",
+      );
+      return;
+    }
     // Replace file in array if the user clicks on the same input to change files
     if (csvRawArray[index]) {
       setCsvRawArray(
