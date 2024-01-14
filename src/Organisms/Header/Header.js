@@ -39,11 +39,9 @@ function Header({ downloadPDF }) {
         <h2 className="programTitle">{programTitle}</h2>
         <p className="programSubtitle">{date}</p>
       </div>
-      {analysisData && (
-        <div>
-          <PageMenu downloadPDF={downloadPDF} />
-        </div>
-      )}
+      <div>
+        <PageMenu downloadPDF={downloadPDF} />
+      </div>
     </div>
   );
 }

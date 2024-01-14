@@ -5,6 +5,8 @@ const FGContext = React.createContext(null);
 export default FGContext;
 
 export function FGContextProvider({ children }) {
+  const defaultButtonTitle = 'Choose a file...';
+
   const [csvRawArray, setCsvRawArray] = useState([]);
   const [csvParsedArray, setCsvParsedArray] = useState([]);
   const [csvStringArray, setCsvStringArray] = useState([]);
@@ -26,6 +28,9 @@ export function FGContextProvider({ children }) {
   const [globalErrorMessage, setGlobalErrorMessage] = useState('');
   const [firingNoteValue, setFiringNoteValue] = useState('');
   const [dataExpandedState, setDataExpandedState] = useState(null);
+  const [uploadButtonArray, setUploadButtonArray] = useState([
+    { title: defaultButtonTitle },
+  ]);
 
   const resetState = () => {
     setCsvRawArray([]);
@@ -43,6 +48,7 @@ export function FGContextProvider({ children }) {
     setGlobalErrorMessage('');
     setFiringNoteValue('');
     setDataExpandedState(null);
+    setUploadButtonArray([{ title: defaultButtonTitle }]);
   };
 
   // ugly but it works
@@ -81,6 +87,9 @@ export function FGContextProvider({ children }) {
       dataExpandedState,
       setDataExpandedState,
       resetState,
+      uploadButtonArray,
+      setUploadButtonArray,
+      defaultButtonTitle,
     }),
     [
       csvRawArray,
@@ -114,6 +123,9 @@ export function FGContextProvider({ children }) {
       dataExpandedState,
       setDataExpandedState,
       resetState,
+      uploadButtonArray,
+      setUploadButtonArray,
+      defaultButtonTitle,
     ],
   );
 

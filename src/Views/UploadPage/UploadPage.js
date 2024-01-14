@@ -13,17 +13,16 @@ import Modal from '../../Atoms/Modal/Modal';
 
 function UploadForm() {
   // Hook(s)
-  const defaultButtonTitle = 'Choose a file...';
   const {
     csvRawArray,
     setCsvRawArray,
     setCsvParsedArray,
     resetState,
     setGlobalErrorMessage,
+    uploadButtonArray,
+    setUploadButtonArray,
+    defaultButtonTitle,
   } = useFGContext();
-  const [uploadButtonArray, setUploadButtonArray] = useState([
-    { title: defaultButtonTitle },
-  ]);
   const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
