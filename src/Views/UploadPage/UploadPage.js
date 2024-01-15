@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, IconButton, styled } from '@mui/joy';
 import './UploadPage.css';
 import { useNavigate } from 'react-router-dom';
@@ -7,9 +7,11 @@ import { MdOutlineCloudUpload } from 'react-icons/md';
 import { FaRegFile } from 'react-icons/fa';
 import { IoRemoveCircleOutline, IoAddCircle } from 'react-icons/io5';
 import ReactGA from 'react-ga4';
+import { ImLab } from 'react-icons/im';
 import { useFGContext } from '../../context/FGContext';
 import Tooltip from '../../Atoms/Tooltip/Tooltip';
 import Modal from '../../Atoms/Modal/Modal';
+import Banner from '../../Atoms/Banner/Banner';
 
 function UploadForm() {
   // Hook(s)
@@ -24,6 +26,8 @@ function UploadForm() {
     defaultButtonTitle,
   } = useFGContext();
   const [errorMessage, setErrorMessage] = useState('');
+  const [bannerOpen, setBannerOpen] = useState(true);
+  const bannerRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -169,6 +173,10 @@ function UploadForm() {
     setCsvRawArray(newCsvRawArray);
   };
 
+  const closeBanner = () => {
+    setBannerOpen(false);
+  };
+
   // Effect(s)
   useEffect(() => {
     resetState();
@@ -246,6 +254,18 @@ function UploadForm() {
 
   return (
     <div className="uploadForm">
+      {bannerOpen && (
+        <Banner
+          key="banner-key"
+          body="This is an alert"
+          title="Try Me"
+          icon={<ImLab size={24} />}
+          onClose={closeBanner}
+          color="success"
+          ref={bannerRef}
+          containerClass="fadeInDown"
+        />
+      )}
       <div className="uploadCard">
         <h2 className="uploadInstructions">
           Upload your Bartlett Genesis Log File(s) below.
