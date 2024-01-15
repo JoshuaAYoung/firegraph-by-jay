@@ -143,6 +143,10 @@ function UploadForm() {
         ),
       )
         .then(() => {
+          if (parsedFileArray.length === 0) {
+            setErrorMessage(parsingErrorMessage);
+            throw new Error('Parsed file array came up empty.');
+          }
           setCsvParsedArray(parsedFileArray);
         })
         .then(() => {
