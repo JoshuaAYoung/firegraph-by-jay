@@ -7,9 +7,11 @@ import { MdOutlineCloudUpload } from 'react-icons/md';
 import { FaRegFile } from 'react-icons/fa';
 import { IoRemoveCircleOutline, IoAddCircle } from 'react-icons/io5';
 import ReactGA from 'react-ga4';
+import { ImLab } from 'react-icons/im';
 import { useFGContext } from '../../context/FGContext';
 import Tooltip from '../../Atoms/Tooltip/Tooltip';
 import Modal from '../../Atoms/Modal/Modal';
+import Banner from '../../Atoms/Banner/Banner';
 
 function UploadForm() {
   // Hook(s)
@@ -24,6 +26,7 @@ function UploadForm() {
     defaultButtonTitle,
   } = useFGContext();
   const [errorMessage, setErrorMessage] = useState('');
+  const [bannerOpen, setBannerOpen] = useState(true);
 
   const navigate = useNavigate();
 
@@ -70,16 +73,20 @@ function UploadForm() {
     setUploadButtonArray(newUploadButtonArray);
   };
 
-  const parseCsvArray = (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
+    parseCsvArray(csvRawArray);
+  };
+
+  const parseCsvArray = (csvFileArray) => {
     const parsedFileArray = [];
     // the second file contains a duplicate of a lot of data (starting at a "block continue" entry)
     // This allows us to replace a certain number of rows from the previous file when adding the new one
     const blockContinueRowArray = [];
 
-    if (csvRawArray.length) {
+    if (csvFileArray.length) {
       Promise.all(
-        csvRawArray.map(
+        csvFileArray.map(
           (csv) =>
             new Promise((resolve, reject) => {
               let isFirstRow = true;
@@ -111,7 +118,7 @@ function UploadForm() {
                     blockContinueRowArray[row.data.time] &&
                     row.data.event === 'block continue' &&
                     fileIndex !== 0 &&
-                    csvRawArray.length > 1
+                    csvFileArray.length > 1
                   ) {
                     setGlobalErrorMessage(
                       'Files were likely uploaded in the wrong order. If the graph looks strange, try uploading the files again in order. From the menu, you can choose to view the raw CSV files to check the order.',
@@ -167,6 +174,21 @@ function UploadForm() {
 
     const newCsvRawArray = csvRawArray.filter((_item, ind) => ind !== index);
     setCsvRawArray(newCsvRawArray);
+  };
+
+  const closeBanner = () => {
+    setBannerOpen(false);
+  };
+
+  const uploadDemo = () => {
+    fetch('./assets/Demo.csv')
+      .then((response) => response.blob())
+      .then((blob) => {
+        const file = new File([blob], 'demo.csv', { type: 'text/csv' });
+        setCsvRawArray([file]);
+        setUploadButtonArray([{ title: 'demo.csv' }]);
+        parseCsvArray([file]);
+      });
   };
 
   // Effect(s)
@@ -244,8 +266,40 @@ function UploadForm() {
     );
   };
 
+  const renderEndDecorator = () => (
+    <div className="bannerActionContainer">
+      <Button
+        variant="outlined"
+        color="neutral"
+        onClick={closeBanner}
+        className="dismissActionButton"
+      >
+        Dismiss
+      </Button>
+
+      <Button
+        variant="solid"
+        color="neutral"
+        onClick={uploadDemo}
+        className="demoActionButton"
+      >
+        Demo
+      </Button>
+    </div>
+  );
+
   return (
     <div className="uploadForm">
+      {bannerOpen && (
+        <Banner
+          key="banner-key"
+          body="Want to give it a spin but don't have a log file handy? Try one of ours!"
+          icon={<ImLab size={18} />}
+          color="neutral"
+          variant="soft"
+          endDecorator={renderEndDecorator()}
+        />
+      )}
       <div className="uploadCard">
         <h2 className="uploadInstructions">
           Upload your Bartlett Genesis Log File(s) below.
@@ -261,7 +315,7 @@ function UploadForm() {
             tabIndex={-1}
             variant="solid"
             color="warning"
-            onClick={parseCsvArray}
+            onClick={onSubmit}
             disabled={!csvRawArray.length}
           >
             Submit

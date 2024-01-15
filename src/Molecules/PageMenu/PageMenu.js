@@ -19,15 +19,13 @@ import { useFGContext } from '../../context/FGContext';
 function PageMenu({ downloadPDF }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { setDataExpandedState, setCsvRawArray, setUploadButtonArray } =
-    useFGContext();
+  const { setDataExpandedState } = useFGContext();
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const isResultsPage = location.pathname === '/results';
   const isCsvPage = location.pathname === '/csv';
-  const isHomePage = location.pathname === '/';
 
   const pdfAlertTitle =
     "This button typically downloads a screenshot, but this file can be very large for long CSVs. Instyead, try printing from your browser and choose 'Save as PDF'.";
@@ -70,16 +68,6 @@ function PageMenu({ downloadPDF }) {
     });
     setDataExpandedState('expanded');
     setTimeout(() => downloadPDF(), 300);
-  };
-
-  const uploadDemo = () => {
-    fetch('./assets/Demo.csv')
-      .then((response) => response.blob())
-      .then((blob) => {
-        const file = new File([blob], 'demo.csv', { type: 'text/csv' });
-        setCsvRawArray([file]);
-        setUploadButtonArray([{ title: 'demo.csv' }]);
-      });
   };
 
   const MenutItemSX = {
@@ -127,51 +115,43 @@ function PageMenu({ downloadPDF }) {
           boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px;',
         }}
       >
-        {isHomePage ? (
-          <MenuItem sx={MenutItemSX} onClick={uploadDemo}>
-            Try a Demo
-          </MenuItem>
-        ) : (
-          <>
-            <MenuItem sx={MenutItemSX} onClick={navigateHome}>
-              Home
-            </MenuItem>
-            <MenuItem
-              sx={MenutItemSX}
-              onClick={isResultsPage ? undefined : navigateResults}
-              {...(isResultsPage && {
-                selected: true,
-              })}
-            >
-              Data Page
-            </MenuItem>
-            <MenuItem
-              sx={MenutItemSX}
-              onClick={isCsvPage ? undefined : navigateCsv}
-              {...(isCsvPage && {
-                selected: true,
-              })}
-            >
-              CSV Viewer
-            </MenuItem>
-            <ListDivider sx={{ marginTop: 0, marginBottom: 0 }} />
-            <Box display="flex" flexDirection="column" margin="16px 12px">
-              <Button
-                onClick={isResultsPage ? prepareAndDownloadPDF : alertPdf}
-                loading={false}
-                variant="solid"
-                color="warning"
-                size="sm"
-                startDecorator={<MdPictureAsPdf size={20} />}
-                sx={{
-                  fontWeight: 600,
-                }}
-              >
-                Download PDF
-              </Button>
-            </Box>
-          </>
-        )}
+        <MenuItem sx={MenutItemSX} onClick={navigateHome}>
+          Home
+        </MenuItem>
+        <MenuItem
+          sx={MenutItemSX}
+          onClick={isResultsPage ? undefined : navigateResults}
+          {...(isResultsPage && {
+            selected: true,
+          })}
+        >
+          Data Page
+        </MenuItem>
+        <MenuItem
+          sx={MenutItemSX}
+          onClick={isCsvPage ? undefined : navigateCsv}
+          {...(isCsvPage && {
+            selected: true,
+          })}
+        >
+          CSV Viewer
+        </MenuItem>
+        <ListDivider sx={{ marginTop: 0, marginBottom: 0 }} />
+        <Box display="flex" flexDirection="column" margin="16px 12px">
+          <Button
+            onClick={isResultsPage ? prepareAndDownloadPDF : alertPdf}
+            loading={false}
+            variant="solid"
+            color="warning"
+            size="sm"
+            startDecorator={<MdPictureAsPdf size={20} />}
+            sx={{
+              fontWeight: 600,
+            }}
+          >
+            Download PDF
+          </Button>
+        </Box>
       </Menu>
       <Modal
         open={isModalOpen}
