@@ -301,7 +301,7 @@ function DataPage() {
               icon={<LuAlignStartVertical />}
               accessibilityLabel="align"
               label="Align Segment"
-              tooltipText="Arrange target and actual graph lines so that the chosen segment aligns."
+              tooltipText="Arrange target and actual graph lines so that the start of the chosen segment aligns."
               helperText={
                 optionsSegments.length < 2
                   ? 'Disabled: only one segment'
