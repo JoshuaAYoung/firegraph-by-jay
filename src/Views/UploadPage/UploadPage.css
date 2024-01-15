@@ -3,7 +3,6 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  /* padding-top: 50px; */
 }
 
 .uploadCard {
@@ -28,7 +27,7 @@
 
 .uploadNote {
   margin: 20px 0 0;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -48,29 +47,27 @@
   font-weight: 700;
 }
 
-@-webkit-keyframes fadeInDown {
-  0% {
-     opacity: 0;
-     -webkit-transform: translateY(-20px);
-  }
-  100% {
-     opacity: 1;
-     -webkit-transform: translateY(0);
-  }
+.bannerActionContainer {
+  display: flex;
 }
 
-@keyframes fadeInDown {
-  0% {
-     opacity: 0;
-     transform: translateY(-20px);
-  }
-  100% {
-     opacity: 1;
-     transform: translateY(0);
-  }
+.dismissActionButton {
+  margin-right: 16px !important;
 }
 
-.fadeInDown {
-  -webkit-animation-name: fadeInDown;
-  animation-name: fadeInDown;
+@media only screen and (max-width: 920px) {
+  .bannerActionContainer {
+    align-items: flex-end;
+    flex-direction: column;
+  }
+
+  .dismissActionButton {
+    margin-right: 0 !important;
+    margin-bottom: 8px !important;
+    min-width: 90px;
+  }
+
+  .demoActionButton {
+    min-width: 90px;
+  }
 }

@@ -3,49 +3,44 @@ import { Alert, Box, IconButton, Typography } from '@mui/joy';
 import { IoClose } from 'react-icons/io5';
 import './Banner.css';
 
-function Banner({
-  body,
-  title,
-  icon,
-  onClose,
-  containerStyle,
-  color,
-  containerClass,
-}) {
+function Banner({ body, title, icon, onClose, color, variant, endDecorator }) {
   return (
     <Box
       sx={{
-        ...containerStyle,
         display: 'flex',
         gap: 2,
         width: '100%',
         flexDirection: 'column',
       }}
-      className={containerClass}
+      className="bannerContainer"
     >
       <Alert
         key={title}
-        sx={{ alignItems: 'center' }}
+        sx={{ alignItems: 'center', borderRadius: '0' }}
         startDecorator={icon}
-        variant="soft"
+        variant={variant}
         color={color}
         endDecorator={
-          <IconButton variant="soft" onClick={onClose}>
-            <IoClose />
-          </IconButton>
+          endDecorator || (
+            <IconButton variant="soft" onClick={onClose}>
+              <IoClose />
+            </IconButton>
+          )
         }
       >
         <div>
-          <Typography
-            sx={{
-              fontWeight: 'bold',
-              color: 'text.primary',
-              textAlign: 'start',
-            }}
-          >
-            {title}
-          </Typography>
-          <Typography level="body-sm">{body}</Typography>
+          {title && (
+            <Typography
+              sx={{
+                fontWeight: 'bold',
+                color: 'text.primary',
+                textAlign: 'start',
+              }}
+            >
+              {title}
+            </Typography>
+          )}
+          <Typography>{body}</Typography>
         </div>
       </Alert>
     </Box>

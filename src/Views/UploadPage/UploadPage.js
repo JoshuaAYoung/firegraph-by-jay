@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, IconButton, styled } from '@mui/joy';
 import './UploadPage.css';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +27,6 @@ function UploadForm() {
   } = useFGContext();
   const [errorMessage, setErrorMessage] = useState('');
   const [bannerOpen, setBannerOpen] = useState(true);
-  const bannerRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -74,16 +73,20 @@ function UploadForm() {
     setUploadButtonArray(newUploadButtonArray);
   };
 
-  const parseCsvArray = (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
+    parseCsvArray(csvRawArray);
+  };
+
+  const parseCsvArray = (csvFileArray) => {
     const parsedFileArray = [];
     // the second file contains a duplicate of a lot of data (starting at a "block continue" entry)
     // This allows us to replace a certain number of rows from the previous file when adding the new one
     const blockContinueRowArray = [];
 
-    if (csvRawArray.length) {
+    if (csvFileArray.length) {
       Promise.all(
-        csvRawArray.map(
+        csvFileArray.map(
           (csv) =>
             new Promise((resolve, reject) => {
               let isFirstRow = true;
@@ -115,7 +118,7 @@ function UploadForm() {
                     blockContinueRowArray[row.data.time] &&
                     row.data.event === 'block continue' &&
                     fileIndex !== 0 &&
-                    csvRawArray.length > 1
+                    csvFileArray.length > 1
                   ) {
                     setGlobalErrorMessage(
                       'Files were likely uploaded in the wrong order. If the graph looks strange, try uploading the files again in order. From the menu, you can choose to view the raw CSV files to check the order.',
@@ -175,6 +178,17 @@ function UploadForm() {
 
   const closeBanner = () => {
     setBannerOpen(false);
+  };
+
+  const uploadDemo = () => {
+    fetch('./assets/Demo.csv')
+      .then((response) => response.blob())
+      .then((blob) => {
+        const file = new File([blob], 'demo.csv', { type: 'text/csv' });
+        setCsvRawArray([file]);
+        setUploadButtonArray([{ title: 'demo.csv' }]);
+        parseCsvArray([file]);
+      });
   };
 
   // Effect(s)
@@ -252,18 +266,38 @@ function UploadForm() {
     );
   };
 
+  const renderEndDecorator = () => (
+    <div className="bannerActionContainer">
+      <Button
+        variant="outlined"
+        color="neutral"
+        onClick={closeBanner}
+        className="dismissActionButton"
+      >
+        Dismiss
+      </Button>
+
+      <Button
+        variant="solid"
+        color="neutral"
+        onClick={uploadDemo}
+        className="demoActionButton"
+      >
+        Demo
+      </Button>
+    </div>
+  );
+
   return (
     <div className="uploadForm">
       {bannerOpen && (
         <Banner
           key="banner-key"
-          body="This is an alert"
-          title="Try Me"
-          icon={<ImLab size={24} />}
-          onClose={closeBanner}
-          color="success"
-          ref={bannerRef}
-          containerClass="fadeInDown"
+          body="Want to give it a spin but don't have a log file handy? Try one of ours!"
+          icon={<ImLab size={18} />}
+          color="neutral"
+          variant="soft"
+          endDecorator={renderEndDecorator()}
         />
       )}
       <div className="uploadCard">
@@ -281,7 +315,7 @@ function UploadForm() {
             tabIndex={-1}
             variant="solid"
             color="warning"
-            onClick={parseCsvArray}
+            onClick={onSubmit}
             disabled={!csvRawArray.length}
           >
             Submit
