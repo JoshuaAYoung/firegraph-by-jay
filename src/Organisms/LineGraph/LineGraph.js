@@ -66,7 +66,7 @@ function LineGraph({ segmentOffset }) {
   return (
     <ResponsiveContainer
       width="100%"
-      aspect={2}
+      aspect={isMobile ? 1.5 : 1.8}
       marginTop={20}
       className="lineGraphContainer"
     >
