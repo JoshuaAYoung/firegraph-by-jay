@@ -1,5 +1,4 @@
 import React from 'react';
-import './DataContainer.css';
 import { Box, Button, Grid } from '@mui/joy';
 import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
 import DataTable from '../../Molecules/DataTable/DataTable';
@@ -8,9 +7,12 @@ import PrefireDataCard from '../../Molecules/DataCard/PrefireDataCard';
 import DataCardContainer from '../../Molecules/DataCard/DataCardContainer';
 import FiringNotes from '../../Molecules/FiringNotes/FiringNotes';
 import { useFGContext } from '../../context/FGContext';
+import useWindowDimensions from '../../Utils/useWindowDimensions/useWindowDimensions';
 
 function DataContainer() {
   const { dataExpandedState, setDataExpandedState } = useFGContext();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 600;
 
   const expandAll = () => {
     if (dataExpandedState !== 'expanded') {
@@ -48,7 +50,7 @@ function DataContainer() {
               onClick={expandAll}
               sx={{
                 backgroundColor: '#f2f2f2',
-                borderRadius: 8,
+                borderRadius: isMobile ? 0 : 8,
                 padding: '8px 0;',
                 width: '100%',
                 '&:hover': {
@@ -68,7 +70,7 @@ function DataContainer() {
               onClick={collapseAll}
               sx={{
                 backgroundColor: '#f2f2f2',
-                borderRadius: 8,
+                borderRadius: isMobile ? 0 : 8,
                 padding: '8px 0;',
                 width: '100%',
                 '&:hover': {

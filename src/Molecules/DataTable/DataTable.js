@@ -11,9 +11,13 @@ import {
 } from '../../Utils/dateUtils/dateUtils';
 import Tooltip from '../../Atoms/Tooltip/Tooltip';
 import { useFGContext } from '../../context/FGContext';
+import useWindowDimensions from '../../Utils/useWindowDimensions/useWindowDimensions';
 
 function DataTable() {
   const { analysisData, graphOptions } = useFGContext();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 600;
+
   const tempTooltipText =
     'This value is affected by the user selected TCs at the top of the page.';
 
@@ -101,7 +105,7 @@ function DataTable() {
       color="neutral"
       sx={{
         overflow: 'auto',
-        borderRadius: 'sm',
+        borderRadius: isMobile ? 0 : 8,
         transition: '0.3s',
         '& tr:last-child': {
           '& td:first-of-type': {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid } from '@mui/joy';
+import { Grid } from '@mui/joy';
 import { FaTemperatureHigh } from 'react-icons/fa';
 import { GiElectric } from 'react-icons/gi';
 import { FaChartLine } from 'react-icons/fa6';
@@ -316,9 +316,9 @@ function DataPage() {
       <div className="graphContainer">
         <LineGraph segmentOffset={segmentOffset} />
       </div>
-      <Box padding={3} pb={5}>
+      <div className="dataContainer">
         <DataContainer />
-      </Box>
+      </div>
       <Modal
         open={hasError || !!globalErrorMessage}
         onClose={resetErrors}

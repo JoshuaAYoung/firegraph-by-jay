@@ -8,9 +8,15 @@
 .recharts-label {
   font-weight: 500;
   fill: black;
-  color: #deaa30
+  color: #deaa30;
 }
 
 .recharts-line {
   mix-blend-mode: multiply;
+}
+
+@media only screen and (max-width: 600px) {
+  .lineChart {
+    font-size: 0.8rem;
+  }
 }

@@ -13,23 +13,26 @@ import {
 import { useFGContext } from '../../context/FGContext';
 import './LineGraph.css';
 import { minutesToHourString } from '../../Utils/dateUtils/dateUtils';
+import useWindowDimensions from '../../Utils/useWindowDimensions/useWindowDimensions';
 
 function CustomReferenceLabel(props) {
   return (
     <text
       offset={props.offset}
       x={props.viewBox.x - 10}
-      y={200}
+      y={props.viewBox.height / 3}
       className="verticalSegmentLabel"
       textAnchor="middle"
     >
-      Segment {props.value} Start
+      {props.isMobile ? `Seg. ${props.value}` : `Segment ${props.value} Start`}
     </text>
   );
 }
 
 function LineGraph({ segmentOffset }) {
   const { analysisData, graphOptions, combinedChartData } = useFGContext();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 600;
 
   const outputOptionsLength = graphOptions && graphOptions.out.length;
 
@@ -61,17 +64,30 @@ function LineGraph({ segmentOffset }) {
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%" marginTop={20}>
+    <ResponsiveContainer
+      width="100%"
+      aspect={2}
+      marginTop={20}
+      className="lineGraphContainer"
+    >
       <LineChart
-        width={500}
-        height={500}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
+        margin={
+          !isMobile
+            ? {
+                top: 5,
+                right: outputOptionsLength !== 0 ? 8 : 24,
+                left: 8,
+                bottom: 5,
+              }
+            : {
+                top: 5,
+                right: outputOptionsLength !== 0 ? -8 : 16,
+                left: -8,
+                bottom: 5,
+              }
+        }
         data={combinedChartData}
+        className="lineChart"
       >
         {analysisData.segments.map((segment, index) => (
           <ReferenceLine
@@ -83,7 +99,12 @@ function LineGraph({ segmentOffset }) {
                 : segment.segmentTicks[0].index
             }
             stroke="red"
-            label={<CustomReferenceLabel value={segment.number} />}
+            label={
+              <CustomReferenceLabel
+                value={segment.number}
+                isMobile={isMobile}
+              />
+            }
             strokeDasharray="6 3"
             yAxisId="left"
           />
@@ -128,7 +149,7 @@ function LineGraph({ segmentOffset }) {
           // stroke="#D47014"
           activeDot={{ r: 4 }}
           dot={false}
-          strokeWidth={3}
+          strokeWidth={!isMobile ? 3 : 2}
           connectNulls
           yAxisId="left"
           isAnimationActive={false}
@@ -144,7 +165,7 @@ function LineGraph({ segmentOffset }) {
                 stroke={tcColorArray[tcNumber - 1]}
                 activeDot={{ r: 8 }}
                 dot={false}
-                strokeWidth={3}
+                strokeWidth={!isMobile ? 3 : 2}
                 yAxisId="left"
                 animationDuration={3000}
               />
@@ -157,7 +178,7 @@ function LineGraph({ segmentOffset }) {
                 stroke={tcColorArray[2]}
                 activeDot={{ r: 8 }}
                 dot={false}
-                strokeWidth={3}
+                strokeWidth={!isMobile ? 3 : 2}
                 yAxisId="left"
                 animationDuration={3000}
               />
@@ -188,7 +209,7 @@ function LineGraph({ segmentOffset }) {
                 stroke={outColorArray[outputNumber - 1]}
                 activeDot={{ r: 8 }}
                 dot={false}
-                strokeWidth={3}
+                strokeWidth={!isMobile ? 3 : 2}
                 yAxisId="right"
                 isAnimationActive={false}
               />

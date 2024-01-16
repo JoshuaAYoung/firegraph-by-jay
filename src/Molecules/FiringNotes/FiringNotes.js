@@ -6,9 +6,12 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { Box, Typography as JoyTypography } from '@mui/joy';
 import { useFGContext } from '../../context/FGContext';
 import './FiringNotes.css';
+import useWindowDimensions from '../../Utils/useWindowDimensions/useWindowDimensions';
 
 function FiringNotes() {
   const { firingNoteValue, setFiringNoteValue } = useFGContext();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 600;
 
   const editor = useEditor({
     extensions: [
@@ -30,7 +33,7 @@ function FiringNotes() {
         padding: '20px 24px 24px;',
       }}
       backgroundColor="#f2f2f2"
-      borderRadius={8}
+      borderRadius={isMobile ? 0 : 8}
       textAlign="left"
     >
       <JoyTypography
