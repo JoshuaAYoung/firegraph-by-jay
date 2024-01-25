@@ -31,8 +31,9 @@ function CustomReferenceLabel(props) {
 
 function LineGraph({ segmentOffset }) {
   const { analysisData, graphOptions, combinedChartData } = useFGContext();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const isMobile = width < 600;
+  const isLargeDesktop = width > 1200;
 
   const outputOptionsLength = graphOptions && graphOptions.out.length;
 
@@ -63,10 +64,20 @@ function LineGraph({ segmentOffset }) {
     return `Time : ${minutesToHourString(value)} hours`;
   };
 
+  const getAspectRatio = () => {
+    if (isMobile) {
+      return 1.5;
+    }
+    if (isLargeDesktop) {
+      return (width / height) * 1.3;
+    }
+    return 1.8;
+  };
+
   return (
     <ResponsiveContainer
       width="100%"
-      aspect={isMobile ? 1.5 : 1.8}
+      aspect={getAspectRatio()}
       marginTop={20}
       className="lineGraphContainer"
     >
