@@ -61,7 +61,7 @@ function LineGraph({ segmentOffset }) {
     if (props && props.dataKey.toLowerCase().includes('out')) {
       return [`${value}%`, `${name}`];
     }
-    return `Time : ${minutesToHourString(value)} hours`;
+    return `Time : ${minutesToHourString(value)}`;
   };
 
   const getAspectRatio = () => {
