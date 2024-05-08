@@ -3,7 +3,6 @@ import './Footer.css';
 import { VscGithub } from 'react-icons/vsc';
 import { PiInstagramLogoBold } from 'react-icons/pi';
 import { HiOutlineMail } from 'react-icons/hi';
-import { RiRedditLine } from 'react-icons/ri';
 
 function Footer() {
   // generate current year for copyright
@@ -42,15 +41,6 @@ function Footer() {
           className="socialIcon"
         >
           <VscGithub size={28} />
-        </a>
-        <a
-          href="https://www.reddit.com/user/jay_klay_pots"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Reddit Link"
-          className="socialIcon"
-        >
-          <RiRedditLine size={32} />
         </a>
       </div>
       <p className="copyright">
