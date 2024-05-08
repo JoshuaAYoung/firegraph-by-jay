@@ -34,7 +34,7 @@ function Footer() {
           <HiOutlineMail size={32} />
         </a>
         <a
-          href="https://github.com/JoshuaAYoung"
+          href="https://github.com/JoshuaAYoung/firegraph-by-jay"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Github Link"
