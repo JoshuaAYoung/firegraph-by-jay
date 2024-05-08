@@ -1,5 +1,3 @@
-<h3 align="center">Fire Graph</h3>
-
 <img src="https://www.fire-graph.com/assets/firing-graph-logo.svg" width="15%">
 
 # Fire Graph
