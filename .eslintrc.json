@@ -32,6 +32,7 @@
     "react/jsx-indent": "off",
     "no-restricted-globals": "off",
     "react/jsx-props-no-spreading": "off",
-    "no-shadow": "off"
+    "no-shadow": "off",
+    "no-nested-ternary": "off"
   }
 }
