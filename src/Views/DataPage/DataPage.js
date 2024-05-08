@@ -148,9 +148,9 @@ function DataPage() {
             setSegmentLookupTable(segmentLookupObject);
             setGraphOptions({
               tcs: defaultTCArray,
-              avg: true,
+              avg: false,
               align: optionsSegmentsArray[0]?.value || '1',
-              out: [],
+              out: [1, 2, 3],
             });
           } else {
             throw new Error('Data Error, analyze CSV data.');
@@ -227,6 +227,8 @@ function DataPage() {
   if (isLoading) {
     return <LoadingIndicator />;
   }
+
+  console.log('graphOptions.out', graphOptions.out);
 
   return (
     <div>

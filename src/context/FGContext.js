@@ -21,9 +21,9 @@ export function FGContextProvider({ children }) {
   const [defaultTC, setDefaultTC] = useState([]);
   const [graphOptions, setGraphOptions] = useState({
     tcs: [],
-    avg: true,
+    avg: false,
     align: '1',
-    out: [],
+    out: [1, 2, 3],
   });
   const [globalErrorMessage, setGlobalErrorMessage] = useState('');
   const [firingNoteValue, setFiringNoteValue] = useState('');
@@ -44,7 +44,7 @@ export function FGContextProvider({ children }) {
     setOptionsSegments([]);
     setSegmentLookupTable([]);
     setDefaultTC([]);
-    setGraphOptions({ tcs: [], avg: true, align: '1', out: [] });
+    setGraphOptions({ tcs: [], avg: false, align: '1', out: [1, 2, 3] });
     setGlobalErrorMessage('');
     setFiringNoteValue('');
     setDataExpandedState(null);
