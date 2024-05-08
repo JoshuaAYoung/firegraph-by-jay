@@ -1,12 +1,12 @@
 <h3 align="center">Fire Graph</h3>
 
-<img src="https://github.com/JoshuaAYoung/firegraph-by-jay" width="15%">
+<img src="https://www.fire-graph.com/assets/firing-graph-logo.svg" width="15%">
 
 # Fire Graph
 
 ## Live App: [Fire Graph](https://fire-graph.com)
 
-[![CodeFactor](https://www.codefactor.io/repository/github.com/JoshuaAYoung/firegraph-by-jay/badge)](https://www.codefactor.io/repository/github.com/JoshuaAYoung/firegraph-by-jay)
+[![CodeFactor](https://www.codefactor.io/repository/github/joshuaayoung/firegraph-by-jay/badge)](https://www.codefactor.io/repository/github/joshuaayoung/firegraph-by-jay)
 
 ## Description
 
