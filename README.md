@@ -8,7 +8,7 @@
 
 ## Description
 
-Fire Graph is a platform for graphing CSV data output from Bartlett Genesis pottery kilns.
+Fire Graph is a platform for graphing CSV data output from [Bartlett Genesis kiln controllers](https://www.bartinst.com/kilns/35)
 
 ## Getting Started
 
