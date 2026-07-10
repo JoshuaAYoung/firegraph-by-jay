@@ -188,7 +188,7 @@ function DataPage() {
       const combinedData = zipArrayOfObjects(
         targetDataArrayWithApprox,
         actualData,
-        graphOptions.align === optionsSegments[0].value ? 0 : arrayOffset,
+        graphOptions.align === optionsSegments[0]?.value ? 0 : arrayOffset,
         graphOptions.tcs,
       );
 
@@ -227,8 +227,6 @@ function DataPage() {
   if (isLoading) {
     return <LoadingIndicator />;
   }
-
-  console.log('graphOptions.out', graphOptions.out);
 
   return (
     <div>

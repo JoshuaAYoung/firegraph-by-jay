@@ -94,6 +94,17 @@ function UploadForm() {
               Papa.parse(csv, {
                 header: true,
                 skipEmptyLines: true,
+                // New Genesis firmware prepends a "temperature units,F,..." line before the
+                // real header row. Strip any leading lines until we hit the actual header.
+                beforeFirstChunk: (chunk) => {
+                  const lines = chunk.split('\n');
+                  const headerIndex = lines.findIndex((line) =>
+                    line.startsWith('time,'),
+                  );
+                  return headerIndex > 0
+                    ? lines.slice(headerIndex).join('\n')
+                    : chunk;
+                },
                 step: (row) => {
                   // So basically, these conditions target the first "block continue" of the 2nd file
                   // and matches the time with a time from the 1st file's array of "block continue" objects
