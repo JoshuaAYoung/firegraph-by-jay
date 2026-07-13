@@ -388,7 +388,8 @@ export const composeTargetChartData = (analysisData) => {
 
   // graph points in the array for segment
   analysisData.segments.forEach((segment, index) => {
-    const startTemp = index === 0
+    const startTemp =
+      index === 0
         ? startActualTemp
         : analysisData.segments[index - 1]?.targetTemp || 0;
     const segmentMinutes = minutesFromRamp(
