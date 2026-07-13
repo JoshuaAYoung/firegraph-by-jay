@@ -223,6 +223,7 @@ export const analyzeCsv = (dataArray) => {
                   temp1: row.temp1 ? Number(row.temp1) : null,
                   temp2: row.temp2 ? Number(row.temp2) : null,
                   temp3: row.temp3 ? Number(row.temp3) : null,
+                  sp: row.sp ? Number(row.sp) : null,
                   out1: row.out1 ? Number(row.out1) : null,
                   out2: row.out2 ? Number(row.out2) : null,
                   out3: row.out3 ? Number(row.out3) : null,
@@ -231,7 +232,6 @@ export const analyzeCsv = (dataArray) => {
               }
             }
             if (segmentType === 'hold') {
-              // Add the start temps and end temps for holds
               analysisObj.segments[0].hold = {
                 ...analysisObj.segments[0].hold,
                 actualHalfMinutes:
@@ -257,6 +257,7 @@ export const analyzeCsv = (dataArray) => {
                   temp1: row.temp1 ? Number(row.temp1) : null,
                   temp2: row.temp2 ? Number(row.temp2) : null,
                   temp3: row.temp3 ? Number(row.temp3) : null,
+                  sp: row.sp ? Number(row.sp) : null,
                   out1: row.out1 ? Number(row.out1) : null,
                   out2: row.out2 ? Number(row.out2) : null,
                   out3: row.out3 ? Number(row.out3) : null,
@@ -372,13 +373,25 @@ export const composeTargetChartData = (analysisData) => {
   // and this screws up the graph a lot. Not necessary to support these files probably, but neat trick
   const initialTimeValue =
     Number(analysisData?.segments[0]?.segmentTicks[0]?.time) || 0;
-  const targetData = [{ time: initialTimeValue, targetTemp: 0 }];
+
+  // Use the first actual temperature as the starting point for the program target
+  const firstTick = analysisData?.segments[0]?.segmentTicks[0];
+  const startActualTemp = firstTick
+    ? firstTick.temp1 || firstTick.temp2 || firstTick.temp3 || 0
+    : 0;
+
+  const targetData = [
+    { time: initialTimeValue, targetTemp: Number(startActualTemp) },
+  ];
   const targetSegmentLookup = {};
   let minuteCounter = initialTimeValue;
 
   // graph points in the array for segment
   analysisData.segments.forEach((segment, index) => {
-    const startTemp = analysisData.segments[index - 1]?.targetTemp || 0;
+    const startTemp =
+      index === 0
+        ? startActualTemp
+        : analysisData.segments[index - 1]?.targetTemp || 0;
     const segmentMinutes = minutesFromRamp(
       startTemp,
       segment.targetTemp,

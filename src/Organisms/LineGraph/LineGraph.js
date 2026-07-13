@@ -52,8 +52,11 @@ function LineGraph({ segmentOffset }) {
   );
 
   const tooltipFormatter = (value, name, props) => {
+    if (props && props.dataKey === 'sp') {
+      return [`${value}°`, 'Set Point'];
+    }
     if (props && props.dataKey === 'targetTemp') {
-      return [`${value}°`, `${name} Temp`];
+      return [`${value}°`, 'Program'];
     }
     if (props && props.dataKey.toLowerCase().includes('temp')) {
       return [`${value}°`, `${name} Temp${graphOptions.avg ? ' (avg.)' : ''}`];
@@ -151,16 +154,26 @@ function LineGraph({ segmentOffset }) {
         />
         <Legend />
         <Line
-          name="Target"
+          name="Set Point"
           type="linear"
-          dataKey="targetTemp"
+          dataKey="sp"
           stroke="#57B8FF"
-          // stroke="#de663e"
-          // stroke="#deaa30"
-          // stroke="#D47014"
           activeDot={{ r: 4 }}
           dot={false}
           strokeWidth={!isMobile ? 3 : 2}
+          connectNulls
+          yAxisId="left"
+          isAnimationActive={false}
+        />
+        <Line
+          name="Program"
+          type="linear"
+          dataKey="targetTemp"
+          stroke="#deaa30"
+          strokeDasharray="5 5"
+          activeDot={{ r: 4 }}
+          dot={false}
+          strokeWidth={!isMobile ? 2 : 1.5}
           connectNulls
           yAxisId="left"
           isAnimationActive={false}
