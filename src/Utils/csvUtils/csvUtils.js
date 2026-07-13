@@ -377,18 +377,20 @@ export const composeTargetChartData = (analysisData) => {
   // Use the first actual temperature as the starting point for the program target
   const firstTick = analysisData?.segments[0]?.segmentTicks[0];
   const startActualTemp = firstTick
-    ? (firstTick.temp1 || firstTick.temp2 || firstTick.temp3 || 0)
+    ? firstTick.temp1 || firstTick.temp2 || firstTick.temp3 || 0
     : 0;
 
-  const targetData = [{ time: initialTimeValue, targetTemp: Number(startActualTemp) }];
+  const targetData = [
+    { time: initialTimeValue, targetTemp: Number(startActualTemp) },
+  ];
   const targetSegmentLookup = {};
   let minuteCounter = initialTimeValue;
 
   // graph points in the array for segment
   analysisData.segments.forEach((segment, index) => {
     const startTemp = index === 0
-      ? startActualTemp
-      : (analysisData.segments[index - 1]?.targetTemp || 0);
+        ? startActualTemp
+        : analysisData.segments[index - 1]?.targetTemp || 0;
     const segmentMinutes = minutesFromRamp(
       startTemp,
       segment.targetTemp,
