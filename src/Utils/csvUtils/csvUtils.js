@@ -223,6 +223,7 @@ export const analyzeCsv = (dataArray) => {
                   temp1: row.temp1 ? Number(row.temp1) : null,
                   temp2: row.temp2 ? Number(row.temp2) : null,
                   temp3: row.temp3 ? Number(row.temp3) : null,
+                  sp: row.sp ? Number(row.sp) : null,
                   out1: row.out1 ? Number(row.out1) : null,
                   out2: row.out2 ? Number(row.out2) : null,
                   out3: row.out3 ? Number(row.out3) : null,
@@ -231,7 +232,6 @@ export const analyzeCsv = (dataArray) => {
               }
             }
             if (segmentType === 'hold') {
-              // Add the start temps and end temps for holds
               analysisObj.segments[0].hold = {
                 ...analysisObj.segments[0].hold,
                 actualHalfMinutes:
@@ -257,6 +257,7 @@ export const analyzeCsv = (dataArray) => {
                   temp1: row.temp1 ? Number(row.temp1) : null,
                   temp2: row.temp2 ? Number(row.temp2) : null,
                   temp3: row.temp3 ? Number(row.temp3) : null,
+                  sp: row.sp ? Number(row.sp) : null,
                   out1: row.out1 ? Number(row.out1) : null,
                   out2: row.out2 ? Number(row.out2) : null,
                   out3: row.out3 ? Number(row.out3) : null,
